@@ -1,0 +1,20 @@
+:root { color-scheme: light dark; --line: color-mix(in srgb, currentColor 20%, transparent); }
+body { margin: 0; font: 16px/1.6 system-ui, sans-serif; }
+.site { max-width: 64rem; margin: 0 auto; padding: 0 1rem 4rem; }
+.site > header nav { display: flex; gap: 1.5rem; padding: 1rem 0; border-bottom: 1px solid var(--line); }
+.site > header nav a:first-child { font-weight: 700; }
+
+.home { max-width: 40rem; }
+.home .tagline { font-size: 1.25rem; }
+
+.doc { display: grid; grid-template-columns: 12rem minmax(0, 1fr); gap: 2rem; padding-top: 1rem; }
+.doc nav ul { list-style: none; margin: 0; padding: 0; position: sticky; top: 1rem; }
+.doc nav a[aria-current="page"] { font-weight: 600; }
+@media (max-width: 48rem) { .doc { grid-template-columns: 1fr; } }
+
+pre { overflow-x: auto; padding: 1rem; border-radius: .5rem; background: color-mix(in srgb, currentColor 7%, transparent); }
+code { font-family: ui-monospace, monospace; font-size: .9em; }
+blockquote { margin: 0; padding-left: 1rem; border-left: 3px solid var(--line); }
+table { border-collapse: collapse; }
+th, td { text-align: left; padding: .25rem .75rem; border-bottom: 1px solid var(--line); }
+h2, h3 { margin-top: 2em; }
