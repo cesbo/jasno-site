@@ -1,6 +1,8 @@
 # Reactivity
 
-State in jasno is a signal. A signal is a function that returns the current value. Pass the function to keep a place live. Call the function to get a snapshot. Derived values, effects and scheduling all follow from this one rule.
+State in jasno is a signal: a function that returns the current value. Pass the function to keep a place live, or call it to get a snapshot.
+
+Derived values, effects and scheduling all follow from this one rule.
 
 ## The rule
 
@@ -155,7 +157,7 @@ Some work lives as long as the app and outside any component, for example a sess
 | [`EFFECT_NO_DEPS`](/docs/diagnostics/EFFECT_NO_DEPS) | an effect whose first run read nothing |
 | [`ASYNC_IN_EFFECT`](/docs/diagnostics/ASYNC_IN_EFFECT) | `fetch` or `.then` inside an effect |
 | [`EFFECT_LOOP`](/docs/diagnostics/EFFECT_LOOP) | an effect or binding running more than 100 times in one flush |
-| [`FLUSH_REENTRANT`](/docs/diagnostics/FLUSH_REENTRANT) | `flush()` inside a derivation or setup |
+| [`FLUSH_REENTRANT`](/docs/diagnostics/FLUSH_REENTRANT) | `flush()` inside a computed or setup |
 | [`NO_OWNER`](/docs/diagnostics/NO_OWNER) | an effect, resource or component created in a handler or after `await` |
 | [`OWNED_IN_DERIVATION`](/docs/diagnostics/OWNED_IN_DERIVATION) | an effect or component created inside a computed |
 | [`LEAK_IN_SETUP`](/docs/diagnostics/LEAK_IN_SETUP) | a window listener or timer created in setup without cleanup |
