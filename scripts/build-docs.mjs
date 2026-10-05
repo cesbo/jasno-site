@@ -2,7 +2,7 @@
 // while a view chunk loads), public/docs/<slug>.md (the sources, for agents) and public/llms.txt.
 // The browser gets nodes, not HTML: the production CSP blocks innerHTML, so markdown is parsed here, once.
 import { marked } from 'marked';
-import { copyFileSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { copyFileSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 
 const ORIGIN = 'https://jasno.dev';
 const TAGLINE = 'A TypeScript-first framework for single-page apps. Plain TypeScript: no JSX, no template language, no build configuration.';
@@ -39,6 +39,7 @@ function node(t) {
 }
 
 const docs = {};
+rmSync('public/docs', { recursive: true, force: true }); // a deleted page leaves no stale copy behind
 mkdirSync('public/docs', { recursive: true });
 for (const f of readdirSync('docs').filter((f) => f.endsWith('.md')).sort()) {
   const slug = f.slice(0, -3);
@@ -61,5 +62,10 @@ writeFileSync('public/llms.txt', `# jasno
 ## Docs
 
 ${Object.entries(docs).map(([slug, d]) => `- [${d.title}](${ORIGIN}/docs/${slug}.md)`).join('\n')}
+
+## API
+
+- [AGENTS.md](https://raw.githubusercontent.com/cesbo/jasno/HEAD/design/AGENTS.md): the guide for coding agents, copied into every new project
+- [jasno.d.ts](https://raw.githubusercontent.com/cesbo/jasno/HEAD/design/jasno.d.ts): the whole API with a RECIPES block of common patterns
 `);
 console.log(`build-docs: ${Object.keys(docs).length} pages → src/docs.ts, public/docs/, public/llms.txt`);

@@ -29,8 +29,8 @@ test('an unknown doc slug renders not found', async (t) => {
 });
 
 test('a doc URL with a trailing slash (a static host directory redirect) still matches', async (t) => {
-  history.replaceState(null, '', '/docs/guide/');
+  history.replaceState(null, '', '/docs/why/');
   const view = mountTest(t, () => App());
   await settled();
-  assert.equal(view.root.querySelector('h1')?.textContent, 'Agent guide');
+  assert.equal(view.root.querySelector('h1')?.textContent, 'Why another framework');
 });

@@ -32,8 +32,8 @@ test('the Docs link moves focus to the page heading', async ({ page }) => {
 });
 
 test('a doc URL opened directly renders the page', async ({ page }) => {
-  await page.goto('/docs/guide');
-  await expect(page.getByRole('heading', { level: 1, name: 'Agent guide' })).toBeVisible();
+  await page.goto('/docs/why');
+  await expect(page.getByRole('heading', { level: 1, name: 'Why another framework' })).toBeVisible();
 });
 
 test('an unknown URL shows the not-found page', async ({ page }) => {
