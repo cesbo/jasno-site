@@ -1,8 +1,17 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { mountTest, settled } from '@jasno/core/testing';
 import { App } from './app.ts';
 import { router } from './routes.ts';
+
+// A docs page's content is fetched as /docs/<key>.json; here it comes from public/docs/, which npm run docs generated.
+const realFetch = globalThis.fetch;
+globalThis.fetch = async (input, init) => {
+  const url = new URL(input instanceof Request ? input.url : String(input), location.href);
+  if (url.origin !== location.origin || !url.pathname.endsWith('.json')) return realFetch(input, init);
+  try { return new Response(readFileSync(`public${url.pathname}`, 'utf8')); } catch { return new Response(null, { status: 404 }); }
+};
 
 test('the landing renders; a doc page renders its markdown, navigation and table of contents, and focuses its heading', async (t) => {
   history.replaceState(null, '', '/');
@@ -26,6 +35,22 @@ test('the landing renders; a doc page renders its markdown, navigation and table
   assert.equal(view.root.querySelector('article h1')?.textContent, 'Why another framework');
   assert.equal(document.title, 'Why another framework');
   assert.equal(view.root.querySelector('.pager a')?.textContent, 'Previous: Getting started');
+});
+
+test('a prerendered page carries its content as a JSON block, read instead of fetching', async (t) => {
+  const data = document.createElement('script');
+  data.type = 'application/json';
+  data.id = 'doc';
+  data.dataset['key'] = 'guide/why';
+  data.textContent = JSON.stringify({ title: 'Embedded', description: '', toc: [], nodes: [['h1', { id: 'embedded' }, ['Embedded']]] });
+  document.body.append(data);
+  t.after(() => data.remove());
+  history.replaceState(null, '', '/docs/guide/why');
+  const view = mountTest(t, () => App());
+  await settled();
+  assert.equal(view.root.querySelector('article h1')?.textContent, 'Embedded');
+  await router.navigate('/docs/guide/getting-started'); // another page: the block does not match, so it is fetched
+  assert.equal(view.root.querySelector('article h1')?.textContent, 'Getting started');
 });
 
 test('an unknown doc page renders not found', async (t) => {

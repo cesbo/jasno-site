@@ -1,11 +1,12 @@
-// docs/<NN-section>/<NN-page>.md → src/docs.ts (one static module: every page is in the entry chunk, so a prerendered
-// page never flashes while a view chunk loads), public/docs/<section>/<page>.md (the sources, for agents),
-// public/llms.txt, and src/docs-samples/*.ts: every ```ts block of a page as a module that jasno check type-checks.
+// docs/<NN-section>/<NN-page>.md → public/docs/<section>/<page>.json (the page's content: the prerender embeds it in
+// the page's HTML, the client fetches it after a navigation), public/docs/<section>/<page>.md (the source, for agents),
+// src/docs.ts (the page index for the navigation, the only part in the bundle), public/llms.txt, and
+// src/docs-samples/*.ts: every ```ts block of a page as a module that jasno check type-checks.
 // Diagnostics pages are generated from the guides @jasno/core ships in errors/.
 // The browser gets nodes, not HTML: the production CSP blocks innerHTML, so markdown is parsed here, once.
 import { marked } from 'marked';
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 
 const ORIGIN = 'https://jasno.dev';
 const TAGLINE = 'A TypeScript-first framework for single-page apps. Plain TypeScript: no JSX, no template language, no build configuration.';
@@ -51,14 +52,26 @@ function node(t) {
   }
 }
 
-/** A page: title and description from the first h1 and paragraph, the h2 list as its table of contents. */
-function page(md, section, slug, nav) {
+/** A page's content: title and description from the first h1 and paragraph, the h2 list as its table of contents. */
+function page(md, key) {
   const tokens = marked.lexer(md);
   const h1 = tokens.find((t) => t.type === 'heading' && t.depth === 1);
-  if (!h1) throw new Error(`build-docs: ${section}/${slug} has no "# Title"`);
+  if (!h1) throw new Error(`build-docs: ${key} has no "# Title"`);
   const first = tokens.find((t) => t.type === 'paragraph');
   const toc = tokens.filter((t) => t.type === 'heading' && t.depth === 2).map((t) => { const text = plain(t.tokens); return { id: anchor(text), text }; });
-  return { title: plain(h1.tokens), description: first ? excerpt(decode(plain(first.tokens))) : '', section, sectionTitle: titleOf(section), nav, toc, nodes: conv(tokens) };
+  return { title: plain(h1.tokens), description: first ? excerpt(decode(plain(first.tokens))) : '', toc, nodes: conv(tokens) };
+}
+
+const index = []; // the navigation: nav pages in reading order
+function emit(key, md, { nav }) {
+  const doc = page(md, key);
+  const file = `public/docs/${key}`;
+  mkdirSync(dirname(file), { recursive: true });
+  writeFileSync(`${file}.json`, JSON.stringify(doc));
+  writeFileSync(`${file}.md`, md);
+  const [section] = key.split('/');
+  if (nav) index.push({ key, title: doc.title, section, sectionTitle: titleOf(section) });
+  return doc;
 }
 
 /** The ```ts blocks of a page as src/docs-samples/<name>-<n>.ts (```ts fragment is skipped). A <!-- ts: ... --> comment
@@ -79,73 +92,61 @@ function samples(md, file, name) {
   }
 }
 
-/** One page per guide in @jasno/core's errors/ (without its Fixture section, which names jasno's own tests) and a catalogue.
- *  The code pages go to their own module, loaded only on those pages: together they outweigh the rest of the site. */
-function diagnostics(docs) {
-  const pages = {};
-  if (!existsSync(ERRORS_DIR)) { console.warn(`build-docs: no ${ERRORS_DIR}; diagnostics pages skipped`); return { pages }; }
+/** One page per guide in @jasno/core's errors/ (without its Fixture section, which names jasno's own tests) and a catalogue. */
+function diagnostics() {
+  if (!existsSync(ERRORS_DIR)) { console.warn(`build-docs: no ${ERRORS_DIR}; diagnostics pages skipped`); return 0; }
   const codes = [];
   for (const f of readdirSync(ERRORS_DIR).filter((f) => f.endsWith('.md')).sort()) {
     const code = f.slice(0, -3);
     const md = readFileSync(join(ERRORS_DIR, f), 'utf8').replace(/\n## Fixture\n[\s\S]*?(?=\n## |$)/, '\n');
-    const m = /^\*\*(\w+)\*\*, ([^:]+):\s*(.*)$/m.exec(md);
-    codes.push({ code, severity: m?.[1] ?? '', where: m?.[2] ?? 'other', summary: m?.[3] ?? '' });
-    pages[code] = page(md, 'diagnostics', code, false);
+    const m = /^\*\*([^*]+)\*\*, ([^:]+):\s*(.*)$/m.exec(md); // "**warn**, runtime, dev builds: summary"
+    const where = m?.[2] ?? '';
+    const group = where.includes('runtime') ? 'Runtime' : where.includes('testing') ? 'Testing' : 'jasno check, dev and dist';
+    codes.push({ code, severity: m?.[1] ?? '', group, summary: m?.[3] ?? '' });
+    emit(`diagnostics/${code}`, md, { nav: false });
   }
-  const groups = Map.groupBy(codes, (c) => c.where);
-  const catalogue = `# Diagnostics
+  const groups = Map.groupBy(codes, (c) => c.group);
+  emit('diagnostics', `# Diagnostics
 
 Every code jasno can report, with what it means and how to fix it. In development the message carries the code, and \`npm run explain CODE\` prints the same guide in the terminal.
 
-${[...groups].map(([where, list]) => `## ${where[0].toUpperCase()}${where.slice(1)}
+${['Runtime', 'Testing', 'jasno check, dev and dist'].filter((g) => groups.has(g)).map((g) => `## ${g}
 
-${list.map((c) => `- [\`${c.code}\`](/docs/diagnostics/${c.code}), ${c.severity}: ${c.summary}`).join('\n')}`).join('\n\n')}
-`;
-  docs.diagnostics = page(catalogue, 'diagnostics', '', true);
-  return { catalogue, pages };
+${groups.get(g).map((c) => `- [\`${c.code}\`](/docs/diagnostics/${c.code}), ${c.severity}: ${c.summary}`).join('\n')}`).join('\n\n')}
+`, { nav: true });
+  return codes.length;
 }
 
-const docs = {};
 rmSync('public/docs', { recursive: true, force: true }); // a deleted page leaves no stale copy behind
 rmSync('src/docs-samples', { recursive: true, force: true });
 mkdirSync('src/docs-samples', { recursive: true });
 for (const dir of readdirSync('docs', { withFileTypes: true }).filter((d) => d.isDirectory()).map((d) => d.name).sort()) {
   const section = stripOrder(dir);
-  mkdirSync(`public/docs/${section}`, { recursive: true });
   for (const f of readdirSync(`docs/${dir}`).filter((f) => f.endsWith('.md')).sort()) {
     const slug = stripOrder(f.slice(0, -3));
     const md = readFileSync(`docs/${dir}/${f}`, 'utf8');
-    docs[`${section}/${slug}`] = page(md, section, slug, true);
+    emit(`${section}/${slug}`, md, { nav: true });
     samples(md, `docs/${dir}/${f}`, `${section}-${slug}`);
-    writeFileSync(`public/docs/${section}/${slug}.md`, md);
   }
 }
-const { catalogue, pages } = diagnostics(docs);
-if (catalogue) writeFileSync('public/docs/diagnostics.md', catalogue);
+const generated = diagnostics();
 
-writeFileSync('src/docs.ts', `// Generated by scripts/build-docs.mjs from docs/; do not edit.
-import type { Doc } from './md.ts';
+writeFileSync('src/docs.ts', `// Generated by scripts/build-docs.mjs from docs/; do not edit. The content of a page is /docs/<key>.json.
+import type { PageEntry } from './md.ts';
 
-export const docs: Readonly<Record<string, Doc>> = ${JSON.stringify(docs)};
+export const pages: readonly PageEntry[] = ${JSON.stringify(index)};
 `);
-writeFileSync('src/diagnostics.ts', `// Generated by scripts/build-docs.mjs from @jasno/core's errors/; do not edit. Loaded only on /docs/diagnostics/:code.
-import type { Doc } from './md.ts';
-
-export const diagnostics: Readonly<Record<string, Doc>> = ${JSON.stringify(pages)};
-`);
-const listed = Object.entries(docs).filter(([, d]) => d.nav);
 writeFileSync('public/llms.txt', `# jasno
 
 > ${TAGLINE}
 
 ## Docs
 
-${listed.map(([key, d]) => `- [${d.title}](${ORIGIN}/docs/${key}.md)`).join('\n')}
+${index.map((e) => `- [${e.title}](${ORIGIN}/docs/${e.key}.md)`).join('\n')}
 
 ## API
 
 - [AGENTS.md](https://raw.githubusercontent.com/cesbo/jasno/HEAD/design/AGENTS.md): the guide for coding agents, copied into every new project
 - [jasno.d.ts](https://raw.githubusercontent.com/cesbo/jasno/HEAD/design/jasno.d.ts): the whole API with a RECIPES block of common patterns
 `);
-const n = readdirSync('src/docs-samples').length;
-console.log(`build-docs: ${listed.length} pages, ${Object.keys(pages).length} diagnostics, ${n} samples → src/docs.ts, src/diagnostics.ts, src/docs-samples/, public/docs/, public/llms.txt`);
+console.log(`build-docs: ${index.length} pages, ${generated} diagnostics, ${readdirSync('src/docs-samples').length} samples → public/docs/, src/docs.ts, src/docs-samples/, public/llms.txt`);
