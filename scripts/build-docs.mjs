@@ -117,6 +117,15 @@ ${groups.get(g).map((c) => `- [\`${c.code}\`](/docs/diagnostics/${c.code}), ${c.
   return codes.length;
 }
 
+// Style gate (AGENTS.md "Site"): warn about sentences over 25 words in prose; code, tables and headings are skipped.
+function longSentences(md, file) {
+  const prose = md.replace(/```[\s\S]*?```/g, '').replace(/<!--[\s\S]*?-->/g, '').split('\n').filter((l) => !/^(#|\||>)/.test(l)).join(' ');
+  for (const s of prose.replace(/`[^`]*`/g, 'x').split(/(?<=[.!?:])\s+/)) {
+    const n = s.split(/\s+/).filter(Boolean).length;
+    if (n > 25) console.warn(`build-docs: ${file}: ${n} words: ${s.slice(0, 60)}...`);
+  }
+}
+
 rmSync('public/docs', { recursive: true, force: true }); // a deleted page leaves no stale copy behind
 rmSync('src/docs-samples', { recursive: true, force: true });
 mkdirSync('src/docs-samples', { recursive: true });
@@ -126,6 +135,7 @@ for (const dir of readdirSync('docs', { withFileTypes: true }).filter((d) => d.i
     const slug = stripOrder(f.slice(0, -3));
     const md = readFileSync(`docs/${dir}/${f}`, 'utf8');
     emit(`${section}/${slug}`, md, { nav: true });
+    longSentences(md, `docs/${dir}/${f}`);
     samples(md, `docs/${dir}/${f}`, `${section}-${slug}`);
   }
 }

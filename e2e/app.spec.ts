@@ -44,7 +44,7 @@ test('an unknown URL shows the not-found page', async ({ page }) => {
 test('a table-of-contents link scrolls to its section', async ({ page }) => {
   await page.setViewportSize({ width: 1400, height: 500 }); // the table of contents shows from 72rem
   await page.goto('/docs/guide/why');
-  await page.getByRole('navigation', { name: 'On this page' }).getByRole('link', { name: 'Where it cost' }).click();
-  await expect(page).toHaveURL(/#where-it-cost$/);
-  await expect(page.getByRole('heading', { level: 2, name: 'Where it cost' })).toBeInViewport();
+  await page.getByRole('navigation', { name: 'On this page' }).getByRole('link', { name: 'What it costs' }).click();
+  await expect(page).toHaveURL(/#what-it-costs$/);
+  await expect(page.getByRole('heading', { level: 2, name: 'What it costs' })).toBeInViewport();
 });
