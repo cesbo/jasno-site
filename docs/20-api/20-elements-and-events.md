@@ -150,21 +150,7 @@ SVG has its own object because some names, such as `a`, `title` and `style`, exi
 
 ## Styles
 
-`` css`...` `` adds a global style sheet. Call it once, at the top level of a module. The text has no `${}` values: an interpolation is a type error. Use `style: { '--x': ... }` for a dynamic value.
-
-Sheets are global, so jasno does not scope the rules. Put a class on the root element of the component, and start each rule with that class.
-
-```ts
-css`
-  .card { padding: 8px; .title { font-weight: 600; } }
-`;
-
-export const Card = component(function Card(p: { title: Read<string> }): Node {
-  return h.section({ class: 'card' }, h.h3({ class: 'title' }, p.title));
-});
-```
-
-Do not remove the focus outline. `jasno check` reports `FOCUS_STYLE_REMOVED` for a rule that sets `outline: none` on an interactive element, unless another rule shows the focus in a different way.
+`class` and `style` are props of the element. For global style sheets, `css` and Tailwind, see the [styling](/docs/api/styling) page.
 
 ## Mistakes this catches
 
@@ -177,4 +163,3 @@ Do not remove the focus outline. `jasno check` reports `FOCUS_STYLE_REMOVED` for
 | [`SUBMIT_NOT_PREVENTED`](/docs/diagnostics/SUBMIT_NOT_PREVENTED) | an `onsubmit` handler does not call `preventDefault()` |
 | [`KEY_ACTIVATES_NEW_FOCUS`](/docs/diagnostics/KEY_ACTIVATES_NEW_FOCUS) | an Enter handler moves focus to an element that Enter activates |
 | [`INTERACTIVE_NO_NAME`](/docs/diagnostics/INTERACTIVE_NO_NAME) | an interactive element without an accessible name |
-| [`FOCUS_STYLE_REMOVED`](/docs/diagnostics/FOCUS_STYLE_REMOVED) | a `css` rule removes the focus outline |
