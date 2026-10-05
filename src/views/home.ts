@@ -21,8 +21,8 @@ export default component(function HomeView(): Node {
     ].join('\n'))),
     h.p(null, Counter()),
     h.p(null,
-      h.a({ href: router.href('/docs/:slug', { slug: 'getting-started' }) }, 'Get started'), ' · ',
-      h.a({ href: router.href('/docs/:slug', { slug: 'why' }) }, 'Why another framework?'), ' · ',
+      h.a({ href: router.href('/docs/:section/:slug?', { section: 'guide', slug: 'getting-started' }) }, 'Get started'), ' · ',
+      h.a({ href: router.href('/docs/:section/:slug?', { section: 'guide', slug: 'why' }) }, 'Why another framework?'), ' · ',
       h.a({ href: 'https://github.com/cesbo/jasno' }, 'Source on GitHub')),
     h.p(null, 'Coding agents: ', h.a({ href: '/llms.txt' }, 'llms.txt'), ' and the AGENTS.md that every new project gets.'),
   );

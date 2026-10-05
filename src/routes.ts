@@ -1,14 +1,21 @@
 import { h } from '@jasno/core';
 import { createRouter, route } from '@jasno/core/router';
 import { docs } from './docs.ts';
+import { keyOf } from './md.ts';
 import DocView from './views/doc.ts';
 import HomeView from './views/home.ts';
 
 // Views are imported statically: the prerendered page is replaced in the same task the entry runs, without a flash.
+// The diagnostics pages are the exception: their module outweighs the rest of the site, so it loads with the route.
 export const router = createRouter([
   route('/', { view: async () => ({ default: HomeView }), title: 'jasno' }),
-  route('/docs/:slug', {
-    loader: async ({ params }) => docs[params.slug] ?? null, // only for the title; the view reads docs itself
+  route('/docs/diagnostics/:code', {
+    loader: async ({ params }) => (await import('./diagnostics.ts')).diagnostics[params.code] ?? null,
+    view: async () => ({ default: DocView }),
+    title: (d) => d?.title ?? 'Page not found',
+  }),
+  route('/docs/:section/:slug?', {
+    loader: async ({ params }) => docs[keyOf(params)] ?? null,
     view: async () => ({ default: DocView }),
     title: (d) => d?.title ?? 'Page not found',
   }),

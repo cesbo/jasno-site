@@ -8,27 +8,31 @@ import { dirname } from 'node:path';
 import { mount } from '@jasno/core';
 import { settled } from '@jasno/core/testing';
 import { App } from '../src/app.ts';
+import { diagnostics } from '../src/diagnostics.ts';
 import { docs } from '../src/docs.ts';
 
 const template = readFileSync('dist/index.html', 'utf8');
 if (!template.includes('<div id="app"></div>')) throw new Error('prerender: dist/index.html has no <div id="app"></div>');
-const escape = (s) => s.replaceAll('&', '&amp;').replaceAll('<', '&lt;');
+const escape = (s) => s.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('"', '&quot;');
 
+const all = { ...docs, ...Object.fromEntries(Object.entries(diagnostics).map(([code, d]) => [`diagnostics/${code}`, d])) };
 const pages = [
   ['/', 'dist/index.html'],
-  ...Object.keys(docs).map((slug) => [`/docs/${slug}`, `dist/docs/${slug}/index.html`]),
+  ...Object.keys(all).map((key) => [`/docs/${key}`, `dist/docs/${key}/index.html`]),
   ['/404', 'dist/404.html'], // the not-found page, served by static hosts for unknown URLs
 ];
 for (const [path, file] of pages) {
+  const doc = path.startsWith('/docs/') ? all[path.slice('/docs/'.length)] : undefined;
   history.replaceState(null, '', path);
   const target = document.createElement('div');
   target.id = 'app';
   document.body.replaceChildren(target);
   const unmount = mount(App, target);
   await settled();
-  const html = template
+  let html = template
     .replace(/<title>.*?<\/title>/, () => `<title>${escape(document.title)}</title>`)
     .replace('<div id="app"></div>', () => target.outerHTML);
+  if (doc?.description) html = html.replace(/<meta name="description" content="[^"]*">/, () => `<meta name="description" content="${escape(doc.description)}">`);
   unmount();
   mkdirSync(dirname(file), { recursive: true });
   writeFileSync(file, html);

@@ -28,6 +28,13 @@ A caveat before the details: the assessment was made by the agent that did the w
 - **Zero configuration.** No bundler, no test configuration. Tests run on `node:test`, without jest or vitest. In most projects that setup is a work item of its own.
 - **Validation is almost free.** The recipe is that the browser validates, and JavaScript adds only the cross-field rules through `setCustomValidity`. The whole validation layer of the fifty-field form is about twenty lines. The habit elsewhere is a form library plus a schema library. That is the culture of the framework rather than its mechanics, but it worked.
 
+<!-- ts:
+declare const draft: Read<{ frequency?: number | undefined }>;
+declare const env: unknown;
+declare const frequency: WritableSignal<number | undefined>;
+declare function validate(d: { frequency?: number | undefined }, env: unknown): Record<string, string | undefined>;
+-->
+
 ```ts
 const errors = computed(() => validate(draft(), env)); // { frequency: 'Outside the allowed band' }
 const input = h.input({ type: 'number', ...bindNumber(frequency) });

@@ -32,11 +32,19 @@ test('the Docs link moves focus to the page heading', async ({ page }) => {
 });
 
 test('a doc URL opened directly renders the page', async ({ page }) => {
-  await page.goto('/docs/why');
+  await page.goto('/docs/guide/why');
   await expect(page.getByRole('heading', { level: 1, name: 'Why another framework' })).toBeVisible();
 });
 
 test('an unknown URL shows the not-found page', async ({ page }) => {
   await page.goto('/nope');
   await expect(page.getByRole('heading', { level: 1, name: 'Page not found' })).toBeVisible();
+});
+
+test('a table-of-contents link scrolls to its section', async ({ page }) => {
+  await page.setViewportSize({ width: 1400, height: 500 }); // the table of contents shows from 72rem
+  await page.goto('/docs/guide/why');
+  await page.getByRole('navigation', { name: 'On this page' }).getByRole('link', { name: 'Where it cost' }).click();
+  await expect(page).toHaveURL(/#where-it-cost$/);
+  await expect(page.getByRole('heading', { level: 2, name: 'Where it cost' })).toBeInViewport();
 });
