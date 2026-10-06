@@ -5,12 +5,18 @@ Wait in the loader before the request. A new value of `params` aborts the wait, 
 <!-- ts: declare function search(q: string, signal: AbortSignal): Promise<readonly string[]>; -->
 
 ```ts
-const delay = (ms: number, signal: AbortSignal) => new Promise<void>((resolve, reject) => {
-  const timer = setTimeout(resolve, ms);
-  signal.addEventListener('abort', () => { clearTimeout(timer); reject(signal.reason); });
-});
+const delay = (ms: number, signal: AbortSignal) =>
+  new Promise<void>((resolve, reject) => {
+    const timer = setTimeout(resolve, ms);
+    signal.addEventListener('abort', () => {
+      clearTimeout(timer);
+      reject(signal.reason);
+    });
+  });
 
-export const Results = component(function Results(p: { query: Read<string> }): Node {
+export const Results = component(function Results(p: {
+  query: Read<string>;
+}): Node {
   const results = resource({
     params: () => p.query() || undefined, // an empty query is idle
     loader: async ({ params, abortSignal }) => {

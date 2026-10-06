@@ -39,10 +39,22 @@ Decide where the focus goes before the update takes the focused element away.
 <!-- ts: declare const r: Resource<string>; -->
 
 ```ts
-const status = h.p({ role: 'status', tabIndex: -1 }, () => (r.status() === 'error' ? 'Could not load.' : ''));
+const status = h.p(
+  { role: 'status', tabIndex: -1 },
+  () => (r.status() === 'error' ? 'Could not load.' : ''),
+);
 const retry = show(
   () => r.status() === 'error',
-  () => h.button({ type: 'button', onclick: () => { status.focus(); r.reload(); } }, 'Retry'),
+  () => h.button(
+    {
+      type: 'button',
+      onclick: () => {
+        status.focus();
+        r.reload();
+      },
+    },
+    'Retry',
+  ),
 );
 ```
 

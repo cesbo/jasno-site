@@ -7,7 +7,10 @@ A function child is always text. To show or hide nodes, to switch between nodes,
 `show(when, then, otherwise?)` renders `then` while `when()` is truthy. Otherwise it renders `otherwise`, or nothing.
 
 ```ts
-export const Details = component(function Details(p: { open: Read<boolean>; text: Read<string> }): Node {
+export const Details = component(function Details(p: {
+  open: Read<boolean>;
+  text: Read<string>;
+}): Node {
   return show(p.open, () => h.p(null, p.text), () => h.p(null, 'Closed'));
 });
 ```
@@ -19,7 +22,11 @@ jasno builds a branch when the page starts, and again each time the truthiness o
 <!-- ts: declare const user: Read<{ name: string } | null>; -->
 
 ```ts
-const greeting = show(user, (u) => h.p(null, () => `Hello, ${u().name}`), () => h.p(null, 'Signed out'));
+const greeting = show(
+  user,
+  (u) => h.p(null, () => `Hello, ${u().name}`),
+  () => h.p(null, 'Signed out'),
+);
 ```
 
 Everything created in a branch lives only as long as the branch. When the condition flips, jasno disposes the branch: its signals, its resources and its `onMount` work. State that must survive a flip lives in a parent.
@@ -34,7 +41,9 @@ A branch must create its own nodes. If it returns a node that you created outsid
 
 ```ts
 const tab = signal<'info' | 'log'>('info');
-const panel = match(tab, (key) => (key === 'info' ? h.p(null, 'Info') : h.p(null, 'Log')));
+const panel = match(tab, (key) => (
+  key === 'info' ? h.p(null, 'Info') : h.p(null, 'Log')
+));
 ```
 
 A key is a primitive or a component. jasno compares keys with `Object.is`. Do not use an object as a key: a new object from every refetch rebuilds the branch each time.
@@ -48,7 +57,9 @@ A key is a primitive or a component. jasno compares keys with `Object.is`. Do no
 ```ts
 export interface Todo { readonly id: number; readonly text: string }
 
-export const TodoList = component(function TodoList(p: { todos: Read<readonly Todo[]> }): Node {
+export const TodoList = component(function TodoList(p: {
+  todos: Read<readonly Todo[]>;
+}): Node {
   return h.ul(null, each(p.todos, {
     key: (t) => t.id,
     render: (todo, index) => h.li(null, () => `${index() + 1}. ${todo().text}`),
@@ -79,14 +90,19 @@ export const Chart = component(function Chart(): Node {
   return h.div({ class: 'chart' });
 });
 
-export const ErrorPanel = component(function ErrorPanel(p: { reset: () => void }): Node {
+export const ErrorPanel = component(function ErrorPanel(p: {
+  reset: () => void;
+}): Node {
   return h.div({ role: 'alert' },
     h.p(null, 'The chart failed.'),
     h.button({ onclick: p.reset }, 'Retry'),
   );
 });
 
-const safe = catchError(() => Chart(), (_error, reset) => ErrorPanel({ reset }));
+const safe = catchError(
+  () => Chart(),
+  (_error, reset) => ErrorPanel({ reset }),
+);
 ```
 
 The boundary catches errors from setup, bindings, effects, `onMount`, cleanups and resources. It does not catch errors from event handlers. They propagate like any DOM listener error.
@@ -108,7 +124,10 @@ You decide where focus goes, before the change. For example, focus a heading bef
 ```ts
 export interface Task { readonly id: number; readonly text: string }
 
-export const Tasks = component(function Tasks(p: { tasks: Read<readonly Task[]>; onRemove: (id: number) => void }): Node {
+export const Tasks = component(function Tasks(p: {
+  tasks: Read<readonly Task[]>;
+  onRemove: (id: number) => void;
+}): Node {
   const heading = h.h2({ tabIndex: -1 }, 'Tasks');
   return h.section(null, heading, h.ul(null, each(p.tasks, {
     key: (t) => t.id,

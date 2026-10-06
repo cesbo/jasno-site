@@ -4,7 +4,13 @@ import { router } from '../routes.ts';
 // The README example, live: the site runs on jasno.
 const Counter = component(function Counter(): Node {
   const count = signal(0);
-  return h.button({ type: 'button', onclick: () => count.update((n) => n + 1) }, 'Clicked ', count, ' times');
+  return h.button(
+    {
+      type: 'button',
+      onclick: () => count.update((n) => n + 1),
+    },
+    'Clicked ', count, ' times',
+  );
 });
 
 export default component(function HomeView(): Node {
@@ -16,7 +22,13 @@ export default component(function HomeView(): Node {
     h.pre(null, h.code(null, [
       'const Counter = component(function Counter(): Node {',
       '  const count = signal(0);',
-      "  return h.button({ type: 'button', onclick: () => count.update((n) => n + 1) }, 'Clicked ', count, ' times');",
+      '  return h.button(',
+      '    {',
+      "      type: 'button',",
+      '      onclick: () => count.update((n) => n + 1),',
+      '    },',
+      "    'Clicked ', count, ' times',",
+      '  );',
       '});',
     ].join('\n'))),
     h.p(null, Counter()),

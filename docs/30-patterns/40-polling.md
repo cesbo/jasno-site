@@ -10,10 +10,14 @@ Schedule the next reload after the last load has finished. When the tab becomes 
 export const Metrics = component(function Metrics(): Node {
   const visible = signal(!document.hidden);
 
-  onMount(({ abortSignal }) => document.addEventListener('visibilitychange', () => {
-    visible.set(!document.hidden);
-    if (!document.hidden && !metrics.isLoading()) metrics.reload();
-  }, { signal: abortSignal }));
+  onMount(({ abortSignal }) => document.addEventListener(
+    'visibilitychange',
+    () => {
+      visible.set(!document.hidden);
+      if (!document.hidden && !metrics.isLoading()) metrics.reload();
+    },
+    { signal: abortSignal },
+  ));
 
   effect(() => {
     if (!visible() || metrics.isLoading()) return;
@@ -21,7 +25,9 @@ export const Metrics = component(function Metrics(): Node {
     return () => clearTimeout(timer);
   });
 
-  return h.p(null, () => (metrics.hasValue() ? metrics.value().join(', ') : 'Loading'));
+  return h.p(null, () => (
+    metrics.hasValue() ? metrics.value().join(', ') : 'Loading'
+  ));
 });
 ```
 

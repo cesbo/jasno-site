@@ -7,10 +7,14 @@ A modal dialog is a native `<dialog>`. This page shows a dialog that a button op
 Open the dialog with `showModal()`. A form with `method: 'dialog'` closes it, and the value of the pressed button becomes the `returnValue`.
 
 ```ts
-export const DeleteContact = component(function DeleteContact(p: { onDelete: () => Promise<void> }): Node {
+export const DeleteContact = component(function DeleteContact(p: {
+  onDelete: () => Promise<void>;
+}): Node {
   const dialog = h.dialog({
     'aria-labelledby': 'del-title',
-    onclose: (e) => { if (e.currentTarget.returnValue === 'yes') return p.onDelete(); },
+    onclose: (e) => {
+      if (e.currentTarget.returnValue === 'yes') return p.onDelete();
+    },
   },
     h.form({ method: 'dialog' },
       h.h2({ id: 'del-title' }, 'Delete this contact?'),
@@ -19,7 +23,13 @@ export const DeleteContact = component(function DeleteContact(p: { onDelete: () 
     ),
   );
   return h.div(null,
-    h.button({ type: 'button', onclick: () => { dialog.returnValue = ''; dialog.showModal(); } }, 'Delete…'),
+    h.button(
+      {
+        type: 'button',
+        onclick: () => { dialog.returnValue = ''; dialog.showModal(); },
+      },
+      'Delete…',
+    ),
     dialog,
   );
 });
@@ -39,7 +49,10 @@ If the dialog lives in a branch, it opens and closes itself. Removing an open di
 
 ```ts
 export const Confirm = component(function Confirm(): Node {
-  const d = h.dialog({ 'aria-label': 'Confirm' }, h.form({ method: 'dialog' }, h.button(null, 'OK')));
+  const d = h.dialog(
+    { 'aria-label': 'Confirm' },
+    h.form({ method: 'dialog' }, h.button(null, 'OK')),
+  );
   onMount(() => { d.showModal(); return () => d.close(); });
   return d;
 });

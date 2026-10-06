@@ -7,7 +7,10 @@ jasno tests run on `node:test` with happy-dom. There is no jest or vitest. Warni
 The `npm test` script runs all test files in one process.
 
 ```sh
-node --conditions=development --import @jasno/core/testing/happy-dom --test --test-isolation=none "src/**/*.test.ts"
+node --conditions=development \
+  --import @jasno/core/testing/happy-dom \
+  --test --test-isolation=none \
+  "src/**/*.test.ts"
 ```
 
 Each part has a job:
@@ -31,7 +34,13 @@ import { mountTest } from '@jasno/core/testing';
 
 const Counter = component(function Counter(): Node {
   const count = signal(0);
-  return h.button({ type: 'button', onclick: () => count.update((n) => n + 1) }, 'Clicks: ', count);
+  return h.button(
+    {
+      type: 'button',
+      onclick: () => count.update((n) => n + 1),
+    },
+    'Clicks: ', count,
+  );
 });
 
 test('the counter counts', (t) => {
@@ -68,7 +77,16 @@ To compare two nodes, write `assert.ok(a === b)`. `assert.equal(a, b)` prints bo
 const Save = component(function Save(): Node {
   const status = signal('');
   return h.div(null,
-    h.button({ type: 'button', onclick: async () => { await Promise.resolve(); status.set('Saved'); } }, 'Save'),
+    h.button(
+      {
+        type: 'button',
+        onclick: async () => {
+          await Promise.resolve();
+          status.set('Saved');
+        },
+      },
+      'Save',
+    ),
     h.p({ role: 'status' }, status),
   );
 });
@@ -91,7 +109,9 @@ To test a warning on purpose, list its code in `expect`. The code must occur. Th
 test('duplicate keys are reported', (t) => {
   mountTest(
     t,
-    () => h.ul(null, each(() => [1, 1], { key: (n) => n, render: (n) => h.li(null, n) })),
+    () => h.ul(null,
+      each(() => [1, 1], { key: (n) => n, render: (n) => h.li(null, n) }),
+    ),
     { expect: ['DUPLICATE_KEY'] },
   );
 });
@@ -109,7 +129,10 @@ test('duplicate keys are reported', (t) => {
 ```ts fragment
 const Filter = component(function Filter(): Node {
   const q = signal('');
-  return h.div(null, h.input({ ...bindValue(q), 'aria-label': 'Filter' }), h.p(null, () => `Query: ${q()}`));
+  return h.div(null,
+    h.input({ ...bindValue(q), 'aria-label': 'Filter' }),
+    h.p(null, () => `Query: ${q()}`),
+  );
 });
 
 test('typing updates the query', (t) => {
@@ -141,7 +164,9 @@ test.beforeEach(({ page }) => {
   page.on('pageerror', (e) => errors.push(String(e)));
 });
 test.afterEach(async ({ page }) => {
-  const warnings = await page.evaluate(() => window.__JASNO__?.diagnostics().map((d) => d.message) ?? null);
+  const warnings = await page.evaluate(
+    () => window.__JASNO__?.diagnostics().map((d) => d.message) ?? null,
+  );
   expect(warnings, 'window.__JASNO__ exists under jasno dev').not.toBeNull();
   expect([...errors, ...(warnings ?? [])]).toEqual([]);
 });

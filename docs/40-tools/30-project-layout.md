@@ -6,14 +6,14 @@
 
 ```text
 my-app/
-  index.html            the page: a slot for jasno, <div id="app">, the entry script
+  index.html            the page: <div id="app"> and the entry script
   package.json          "type": "module", dependencies, "imports", scripts
   tsconfig.json         the browser program
   tsconfig.test.json    the test program
   playwright.config.ts  browser tests
   src/
     main.ts             mount(App, document.getElementById('app'))
-    app.ts              the shell: a header, <main> with router.outlet(), providers
+    app.ts              the shell: header, router.outlet() in <main>, providers
     routes.ts           the route table, and the error and notFound views
     state.ts            app-wide signals
     api.ts              typed fetch functions
@@ -91,7 +91,10 @@ The `imports` field of `package.json` can choose a module by condition. `jasno d
 ```json
 {
   "imports": {
-    "#config": { "development": "./src/config.dev.ts", "default": "./src/config.prod.ts" },
+    "#config": {
+      "development": "./src/config.dev.ts",
+      "default": "./src/config.prod.ts"
+    },
     "#api": { "development": "./src/api.mock.ts", "default": "./src/api.ts" }
   }
 }
@@ -103,7 +106,9 @@ Import the values from the alias: `import config from '#config'`. `config.dev.ts
 
 ```ts fragment
 import type * as Api from './api.ts';
-export const listUsers: typeof Api.listUsers = async () => [{ id: '1', name: 'Ada' }];
+export const listUsers: typeof Api.listUsers = async () => [
+  { id: '1', name: 'Ada' },
+];
 ```
 
 Under `jasno dev`, the mock answers instead of `fetch`. A Playwright `page.route` stub, for example an error or a slow response, reaches only the real module. Run those browser tests against the production build: `JASNO_E2E=preview`.

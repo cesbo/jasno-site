@@ -13,12 +13,20 @@ const HomeView = component(function HomeView(): Node {
   return h.h1(null, 'Home');
 });
 
-const UserView = component(function UserView(p: ViewProps<'/users/:id', User>): Node {
-  return h.section(null, h.h1(null, () => p.data().name), h.p(null, () => `Id: ${p.params().id}`));
+const UserView = component(function UserView(
+  p: ViewProps<'/users/:id', User>,
+): Node {
+  return h.section(null,
+    h.h1(null, () => p.data().name),
+    h.p(null, () => `Id: ${p.params().id}`),
+  );
 });
 
 export const router = createRouter([
-  route('/', { view: () => Promise.resolve({ default: HomeView }), title: 'Home' }),
+  route('/', {
+    view: () => Promise.resolve({ default: HomeView }),
+    title: 'Home',
+  }),
   route('/users/:id', {
     loader: ({ params, abortSignal }) => getUser(params.id, abortSignal),
     view: () => Promise.resolve({ default: UserView }),
@@ -32,7 +40,9 @@ export const router = createRouter([
 
 export const App = component(function App(): Node {
   return h.div(null,
-    h.header(null, h.nav({ 'aria-label': 'Main' }, h.a({ href: router.href('/') }, 'Home'))),
+    h.header(null,
+      h.nav({ 'aria-label': 'Main' }, h.a({ href: router.href('/') }, 'Home')),
+    ),
     h.main(null, router.outlet()));
 });
 ```
@@ -91,8 +101,13 @@ const UserBody = component(function UserBody(p: { id: string }): Node {
   return h.p(null, `User ${p.id}`);
 });
 
-export const UserPage = component(function UserPage(p: ViewProps<'/users/:id'>): Node {
-  return h.section(null, h.h1(null, 'User'), match(() => p.params().id, (id) => UserBody({ id })));
+export const UserPage = component(function UserPage(
+  p: ViewProps<'/users/:id'>,
+): Node {
+  return h.section(null,
+    h.h1(null, 'User'),
+    match(() => p.params().id, (id) => UserBody({ id })),
+  );
 });
 ```
 
@@ -131,7 +146,12 @@ const q = computed(() => router.url().searchParams.get('q') ?? '');
 const search = h.input({
   'aria-label': 'Search',
   value: q,
-  oninput: (e) => { void router.navigate(`?q=${encodeURIComponent(e.currentTarget.value)}`, { replace: true }); },
+  oninput: (e) => {
+    void router.navigate(
+      `?q=${encodeURIComponent(e.currentTarget.value)}`,
+      { replace: true },
+    );
+  },
 });
 ```
 

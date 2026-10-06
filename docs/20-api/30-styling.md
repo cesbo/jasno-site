@@ -13,7 +13,9 @@ css`
   .meter { width: var(--value); height: 4px; background: currentColor; }
 `;
 
-export const Meter = component(function Meter(p: { value: Read<number> }): Node {
+export const Meter = component(function Meter(
+  p: { value: Read<number> },
+): Node {
   return h.div({ class: 'meter', style: { '--value': () => `${p.value()}%` } });
 });
 ```
@@ -66,7 +68,9 @@ Write the class names in full. Tailwind finds a class by reading the source text
 const invalid = signal(false);
 const field = h.input({
   'aria-label': 'Name',
-  class: () => (invalid() ? 'rounded border p-2 border-red-500' : 'rounded border p-2'),
+  class: () => (
+    invalid() ? 'rounded border p-2 border-red-500' : 'rounded border p-2'
+  ),
 });
 ```
 

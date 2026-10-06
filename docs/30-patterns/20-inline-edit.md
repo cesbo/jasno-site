@@ -8,7 +8,9 @@ export const EditableTitle = component(function EditableTitle(p: {
   onRename: (title: string) => Promise<void>;
 }): Node {
   const editing = signal(false);
-  let refocus = false; // set on the Enter and Escape paths only, so tabbing away never pulls the focus back
+  // set on the Enter and Escape paths only,
+  // so tabbing away never pulls the focus back
+  let refocus = false;
 
   return show(editing, () => {
     const commit = (again: boolean): Promise<void> | undefined => {
@@ -21,13 +23,26 @@ export const EditableTitle = component(function EditableTitle(p: {
     const input = h.input({
       value: untracked(p.title),
       'aria-label': 'Title',
-      onkeydown: (e) => { if (e.key === 'Escape') { e.preventDefault(); refocus = true; editing.set(false); } },
-      onblur: () => { if (editing()) void commit(false); }, // Chromium also fires blur when the field is removed
+      onkeydown: (e) => {
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          refocus = true;
+          editing.set(false);
+        }
+      },
+      // Chromium also fires blur when the field is removed
+      onblur: () => { if (editing()) void commit(false); },
     });
     onMount(() => { input.focus(); input.select(); });
-    return h.form({ onsubmit: (e) => { e.preventDefault(); return commit(true); } }, input);
+    return h.form(
+      { onsubmit: (e) => { e.preventDefault(); return commit(true); } },
+      input,
+    );
   }, () => {
-    const title = h.button({ type: 'button', onclick: () => editing.set(true) }, () => p.title());
+    const title = h.button(
+      { type: 'button', onclick: () => editing.set(true) },
+      () => p.title(),
+    );
     if (refocus) { refocus = false; onMount(() => title.focus()); }
     return title;
   });

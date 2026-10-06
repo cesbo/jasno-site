@@ -20,7 +20,10 @@ interface Draft { readonly name: string }
 
 const draft = signal<Draft>({ name: '' });
 const name = h.input({
-  ...bindValue(() => draft().name, (value) => draft.update((d) => ({ ...d, name: value }))),
+  ...bindValue(
+    () => draft().name,
+    (value) => draft.update((d) => ({ ...d, name: value })),
+  ),
   'aria-label': 'Name',
 });
 ```
@@ -35,7 +38,13 @@ An empty field, and an entry that is not finished yet, set `undefined`. `undefin
 
 ```ts
 const seats = signal<number | undefined>(1);
-const field = h.input({ type: 'number', min: '1', required: true, 'aria-label': 'Seats', ...bindNumber(seats) });
+const field = h.input({
+  type: 'number',
+  min: '1',
+  required: true,
+  'aria-label': 'Seats',
+  ...bindNumber(seats),
+});
 ```
 
 ### Checkboxes and radio buttons
@@ -44,7 +53,10 @@ const field = h.input({ type: 'number', min: '1', required: true, 'aria-label': 
 
 ```ts
 const agree = signal(false);
-const box = h.label(null, h.input({ type: 'checkbox', ...bindChecked(agree) }), ' I agree');
+const box = h.label(null,
+  h.input({ type: 'checkbox', ...bindChecked(agree) }),
+  ' I agree',
+);
 ```
 
 A radio group has one signal. Each radio sets two props by hand.
@@ -53,7 +65,12 @@ A radio group has one signal. Each radio sets two props by hand.
 const plan = signal<'free' | 'pro'>('free');
 
 const radio = (value: 'free' | 'pro', label: string) => h.label(null,
-  h.input({ type: 'radio', name: 'plan', checked: () => plan() === value, onchange: () => plan.set(value) }),
+  h.input({
+    type: 'radio',
+    name: 'plan',
+    checked: () => plan() === value,
+    onchange: () => plan.set(value),
+  }),
   ` ${label}`,
 );
 ```
@@ -94,7 +111,10 @@ export const Signup = component(function Signup(): Node {
   }
 
   return h.form({ onsubmit: (e) => { e.preventDefault(); return submit(); } },
-    h.label(null, 'Email ', h.input({ type: 'email', required: true, ...bindValue(email) })),
+    h.label(null,
+      'Email ',
+      h.input({ type: 'email', required: true, ...bindValue(email) }),
+    ),
     h.button({ type: 'submit', 'aria-disabled': saving }, 'Subscribe'),
   );
 });
@@ -120,8 +140,13 @@ const CardForm = component(function CardForm(p: { initial: string }): Node {
   return h.form(null, h.input({ ...bindValue(title), 'aria-label': 'Title' }));
 });
 
-export const CardEditor = component(function CardEditor(p: { card: Read<Card> }): Node {
-  return match(() => p.card().id, () => CardForm({ initial: untracked(p.card).title }));
+export const CardEditor = component(function CardEditor(
+  p: { card: Read<Card> },
+): Node {
+  return match(
+    () => p.card().id,
+    () => CardForm({ initial: untracked(p.card).title }),
+  );
 });
 ```
 

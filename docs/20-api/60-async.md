@@ -9,7 +9,9 @@ A resource has two functions. `params` is synchronous and tracked: it returns th
 <!-- ts: declare function getUser(id: string, signal: AbortSignal): Promise<{ name: string }>; -->
 
 ```ts
-export const UserCard = component(function UserCard(p: { id: Read<string> }): Node {
+export const UserCard = component(function UserCard(p: {
+  id: Read<string>;
+}): Node {
   const user = resource({
     params: () => p.id(),
     loader: ({ params, abortSignal }) => getUser(params, abortSignal),
@@ -52,7 +54,10 @@ Use the other members like this:
 <!-- ts: declare const user: Resource<{ name: string }>; -->
 
 ```ts
-const message = h.p({ role: 'alert' }, () => (user.status() === 'error' ? 'Could not load the user.' : ''));
+const message = h.p(
+  { role: 'alert' },
+  () => (user.status() === 'error' ? 'Could not load the user.' : ''),
+);
 ```
 
 ### latest
@@ -63,8 +68,15 @@ const message = h.p({ role: 'alert' }, () => (user.status() === 'error' ? 'Could
 
 ```ts
 const board = h.section(null,
-  h.p({ role: 'alert' }, () => (metrics.status() === 'error' ? 'Could not refresh.' : '')),
-  show(() => metrics.latest(), (m) => h.p(null, () => m().join(', ')), () => h.p(null, 'Loading')),
+  h.p(
+    { role: 'alert' },
+    () => (metrics.status() === 'error' ? 'Could not refresh.' : ''),
+  ),
+  show(
+    () => metrics.latest(),
+    (m) => h.p(null, () => m().join(', ')),
+    () => h.p(null, 'Loading'),
+  ),
 );
 ```
 

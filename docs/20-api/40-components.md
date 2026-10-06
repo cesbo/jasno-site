@@ -19,7 +19,10 @@ export const Counter = component(function Counter(p: CounterProps): Node {
   }, p.label, ': ', count);
 });
 
-const counter = Counter({ label: () => 'Clicks', onChange: (n) => console.log(n) });
+const counter = Counter({
+  label: () => 'Clicks',
+  onChange: (n) => console.log(n),
+});
 ```
 
 Follow three rules:
@@ -84,7 +87,10 @@ export const Panel = component(function Panel(p: PanelProps): Node {
   return h.section(null, h.h3(null, p.title), show(open, () => p.body()));
 });
 
-const panel = Panel({ title: () => 'Notes', body: () => h.p(null, 'The text') });
+const panel = Panel({
+  title: () => 'Notes',
+  body: () => h.p(null, 'The text'),
+});
 ```
 
 ## Owners and cleanup
@@ -109,7 +115,11 @@ The callback receives an `abortSignal`. It can also return a cleanup function. B
 export const Clock = component(function Clock(): Node {
   const now = signal(Date.now());
   onMount(({ abortSignal }) => {
-    window.addEventListener('focus', () => now.set(Date.now()), { signal: abortSignal });
+    window.addEventListener(
+      'focus',
+      () => now.set(Date.now()),
+      { signal: abortSignal },
+    );
     const timer = setInterval(() => now.set(Date.now()), 1000);
     return () => clearInterval(timer);
   });

@@ -37,7 +37,13 @@ const seatsError = computed(() => {
   const n = seats();
   return n !== undefined && n > 100 ? 'At most 100 seats' : undefined;
 });
-const seatsInput = h.input({ type: 'number', min: '1', required: true, 'aria-label': 'Seats', ...bindNumber(seats) });
+const seatsInput = h.input({
+  type: 'number',
+  min: '1',
+  required: true,
+  'aria-label': 'Seats',
+  ...bindNumber(seats),
+});
 effect(() => seatsInput.setCustomValidity(seatsError() ?? ''));
 ```
 
@@ -57,8 +63,13 @@ declare function validate(d: { frequency?: number | undefined }, env: unknown): 
 -->
 
 ```ts
-const errors = computed(() => validate(draft(), env)); // { frequency: 'Outside the allowed band' }
-const input = h.input({ type: 'number', 'aria-label': 'Frequency', ...bindNumber(frequency) });
+// { frequency: 'Outside the allowed band' }
+const errors = computed(() => validate(draft(), env));
+const input = h.input({
+  type: 'number',
+  'aria-label': 'Frequency',
+  ...bindNumber(frequency),
+});
 effect(() => input.setCustomValidity(errors()['frequency'] ?? ''));
 ```
 
@@ -67,7 +78,9 @@ effect(() => input.setCustomValidity(errors()['frequency'] ?? ''));
 A field component can take an optional `error` prop. Create the effect only when the caller gives the prop. An effect that reads no signal never runs again, and `jasno check` reports it as `EFFECT_NO_DEPS`.
 
 ```ts
-export const Field = component(function Field(p: { error?: Read<string | undefined> | undefined }): Node {
+export const Field = component(function Field(p: {
+  error?: Read<string | undefined> | undefined;
+}): Node {
   const input = h.input({ 'aria-label': 'Name' });
   const error = p.error;
   if (error) effect(() => input.setCustomValidity(error() ?? ''));

@@ -5,7 +5,9 @@ Create the widget in `onMount`, update it in an effect, and destroy it in the cl
 <!-- ts: declare function makeChart(el: HTMLElement): { update(data: readonly number[]): void; destroy(): void }; -->
 
 ```ts
-export const Chart = component(function Chart(p: { data: Read<readonly number[]> }): Node {
+export const Chart = component(function Chart(p: {
+  data: Read<readonly number[]>;
+}): Node {
   const el = h.div({ class: 'chart' });
   onMount(() => {
     const chart = makeChart(el);

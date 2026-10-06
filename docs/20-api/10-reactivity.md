@@ -14,7 +14,8 @@ A signal is a function. Pass `count` to make a live place. Write `count()` to re
 const count = signal(0);
 const doubled = computed(() => count() * 2);
 const live = h.p(null, 'Count: ', count, ', doubled: ', doubled);
-const snapshot = h.p(null, `Count: ${count()}`); // renders "Count: 0" and never changes
+// renders "Count: 0" and never changes
+const snapshot = h.p(null, `Count: ${count()}`);
 ```
 
 Types enforce the rule. A live input has the type `Read<T>`: a function with no arguments that returns `T`. On a `Read<readonly Item[]>`, `items.length` is a type error. The hint says "call it first: items().length". A forgotten call does not compile.
@@ -32,7 +33,10 @@ Names from other frameworks are type errors. `createSignal`, `useState`, `create
 ```ts
 const items = signal<string[]>([]);
 items.update((list) => [...list, 'new']); // replace the array
-const price = signal(1.5, { equal: (a, b) => Math.abs(a - b) < 0.001, debugName: 'price' });
+const price = signal(1.5, {
+  equal: (a, b) => Math.abs(a - b) < 0.001,
+  debugName: 'price',
+});
 ```
 
 Equality is `Object.is`. A write with an equal value does nothing and schedules nothing. The `equal` option replaces `Object.is` for one signal. `equal: () => false` always notifies.
@@ -53,7 +57,8 @@ Use `linkedSignal` for state that resets when an input changes. Do not copy the 
 
 ```ts
 const Draft = component(function Draft(p: { userId: Read<string> }): Node {
-  const text = linkedSignal({ source: p.userId, computation: () => '' }); // resets per user, writable until then
+  // resets per user, writable until then
+  const text = linkedSignal({ source: p.userId, computation: () => '' });
   return h.textarea({ 'aria-label': 'Note', ...bindValue(text) });
 });
 ```
@@ -72,7 +77,8 @@ To fix it, read the signal inside a function that you give to jasno.
 
 ```ts
 const Greeting = component(function Greeting(p: { name: Read<string> }): Node {
-  return h.p(null, () => `Hello, ${p.name()}`); // live; `Hello, ${p.name()}` outside the function would be a snapshot
+  // live; `Hello, ${p.name()}` outside the function would be a snapshot
+  return h.p(null, () => `Hello, ${p.name()}`);
 });
 ```
 
@@ -80,7 +86,8 @@ Read in setup on purpose only when the value must never update. Use `untracked()
 
 ```ts
 const Editor = component(function Editor(p: { initial: Read<string> }): Node {
-  const text = signal(untracked(p.initial)); // a seed: the editor keeps its own state from here
+  // a seed: the editor keeps its own state from here
+  const text = signal(untracked(p.initial));
   return h.input({ 'aria-label': 'Text', ...bindValue(text) });
 });
 ```
@@ -99,7 +106,9 @@ jasno updates its own outputs later. These are DOM bindings, effects, the `item`
 const n = signal(0);
 const label = h.span(null, n);
 n.set(1);
-console.log(n(), label.textContent); // 1 "0": the signal reads back at once, the DOM updates in the next microtask
+// 1 "0": the signal reads back at once,
+// the DOM updates in the next microtask
+console.log(n(), label.textContent);
 flush();
 console.log(label.textContent); // "1"
 ```
@@ -123,7 +132,11 @@ An effect runs in the first flush. It runs again after something it read changes
 const Title = component(function Title(p: { count: Read<number> }): Node {
   effect(() => { document.title = `${p.count()} items`; });
   onMount(({ abortSignal }) => {
-    window.addEventListener('resize', () => console.log(window.innerWidth), { signal: abortSignal });
+    window.addEventListener(
+      'resize',
+      () => console.log(window.innerWidth),
+      { signal: abortSignal },
+    );
   });
   return h.p(null, p.count, ' items');
 });
