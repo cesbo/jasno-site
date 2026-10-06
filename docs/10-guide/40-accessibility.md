@@ -71,7 +71,7 @@ Use a form for Enter-to-save. If you handle Enter in `onkeydown` and the focus m
 
 ### Use native elements for dialogs
 
-A modal dialog uses `showModal()`, has an accessible name, and returns the focus when it closes. The [patterns](/docs/guide/patterns) page has a complete example.
+A modal dialog uses `showModal()`, has an accessible name, and returns the focus when it closes. The [modal dialog](/docs/patterns/modal-dialog) pattern has a complete example.
 
 ### Keep the focus visible
 
