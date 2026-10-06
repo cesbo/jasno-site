@@ -17,6 +17,7 @@ export default component(function HomeView(): Node {
   return h.section({ class: 'home' },
     h.h1(null, 'jasno'),
     h.p({ class: 'tagline' }, 'A TypeScript-first framework for single-page apps. Plain TypeScript: no JSX, no template language, no build configuration.'),
+    h.p(null, 'Made for coding agents: the whole API is one file, and mistakes become type errors or diagnostics with the fix in the message.'),
     h.pre(null, h.code(null, 'npm create @jasno my-app\ncd my-app\nnpm install\nnpm run dev')),
     h.p(null, 'Views are function calls that TypeScript checks like any other code:'),
     h.pre(null, h.code(null, [
