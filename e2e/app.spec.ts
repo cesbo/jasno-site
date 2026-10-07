@@ -70,6 +70,7 @@ test('on a phone the page list is in a menu: it opens, a followed link closes it
 const openMenuWithoutFocus = async (page: Page): Promise<void> => {
   await page.setViewportSize({ width: 390, height: 800 });
   await page.goto('/docs/guide/getting-started');
+  await page.locator('dialog').waitFor({ state: 'attached' }); // the view renders after the load event
   await page.evaluate(() => document.querySelector('dialog')?.showModal());
 };
 
