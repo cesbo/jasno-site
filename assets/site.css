@@ -2,7 +2,10 @@
 @plugin "@tailwindcss/typography";
 
 :root { color-scheme: light dark; }
-html { scrollbar-gutter: stable; } /* a short page has no scrollbar: keep the layout from shifting between pages */
+html {
+  scrollbar-gutter: stable; /* a short page has no scrollbar: keep the layout from shifting between pages */
+  overscroll-behavior: none; /* Safari 16+: no rubber band at the ends, which pulled the sticky header and columns with it */
+}
 
 @layer base {
   body { @apply bg-white text-neutral-900 antialiased dark:bg-neutral-950 dark:text-neutral-100; }
