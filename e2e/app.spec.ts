@@ -42,7 +42,7 @@ test('an unknown URL shows the not-found page', async ({ page }) => {
 });
 
 test('a table-of-contents link scrolls to its section', async ({ page }) => {
-  await page.setViewportSize({ width: 1400, height: 500 }); // the table of contents shows from 72rem
+  await page.setViewportSize({ width: 1400, height: 500 }); // the table of contents shows from 80rem (xl)
   await page.goto('/docs/guide/why');
   await page.getByRole('navigation', { name: 'On this page' }).getByRole('link', { name: 'What it costs' }).click();
   await expect(page).toHaveURL(/#what-it-costs$/);

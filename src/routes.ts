@@ -22,8 +22,14 @@ export const router = createRouter([
     title: (d) => d?.title ?? 'Page not found',
   }),
 ], {
-  error: (error, retry) => h.section(null, h.h1(null, 'Something went wrong'),
-    h.p(null, error instanceof Error ? error.message : 'Unknown error'),
-    h.button({ type: 'button', onclick: retry }, 'Try again')),
-  notFound: () => h.h1(null, 'Page not found'),
+  error: (error, retry) => h.section({ class: 'py-16' }, h.h1({ class: 'text-3xl font-bold' }, 'Something went wrong'),
+    h.p({ class: 'mt-4' }, error instanceof Error ? error.message : 'Unknown error'),
+    h.button({ type: 'button', class: 'mt-4', onclick: retry }, 'Try again')),
+  notFound: () => h.h1({ class: 'py-16 text-3xl font-bold' }, 'Page not found'),
 });
+
+/** The URL of a docs page from its key: "section/slug", or "section" for a section's own page (the inverse of keyOf). */
+export const docHref = (key: string): string => {
+  const [section = '', slug] = key.split('/');
+  return router.href('/docs/:section/:slug?', slug ? { section, slug } : { section });
+};

@@ -1,27 +1,30 @@
-:root { color-scheme: light dark; --line: color-mix(in srgb, currentColor 20%, transparent); }
-body { margin: 0; font: 16px/1.6 system-ui, sans-serif; }
-.site { max-width: 64rem; margin: 0 auto; padding: 0 1rem 4rem; }
-.site > header nav { display: flex; gap: 1.5rem; padding: 1rem 0; border-bottom: 1px solid var(--line); }
-.site > header nav a:first-child { font-weight: 700; }
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
-.home { max-width: 40rem; }
-.home .tagline { font-size: 1.25rem; }
+:root { color-scheme: light dark; }
+html { scrollbar-gutter: stable; } /* a short page has no scrollbar: keep the layout from shifting between pages */
 
-.doc { display: grid; grid-template-columns: 12rem minmax(0, 1fr); gap: 2rem; padding-top: 1rem; }
-.doc nav ul { list-style: none; margin: 0; padding: 0; }
-.doc > nav, .doc .toc { position: sticky; top: 1rem; align-self: start; font-size: .95rem; }
-.doc > nav > ul > li { margin-bottom: 1rem; font-weight: 600; }
-.doc > nav > ul > li > ul { font-weight: 400; }
-.doc nav a[aria-current="page"] { font-weight: 600; }
-.doc .toc { display: none; }
-@media (min-width: 72rem) { .doc { grid-template-columns: 12rem minmax(0, 1fr) 12rem; } .doc .toc { display: block; } }
-@media (max-width: 48rem) { .doc { grid-template-columns: 1fr; } .doc > nav { position: static; } }
-.pager { display: flex; justify-content: space-between; gap: 1rem; margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--line); }
-.pager .next { margin-left: auto; }
+@layer base {
+  body { @apply bg-white text-neutral-900 antialiased dark:bg-neutral-950 dark:text-neutral-100; }
+  button { @apply cursor-pointer rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800; }
+  /* The router focuses the page heading (tabindex="-1", not reachable by Tab) after each navigation: no ring on it. */
+  h1[tabindex="-1"] { outline: none; }
+}
 
-pre { overflow-x: auto; padding: 1rem; border-radius: .5rem; background: color-mix(in srgb, currentColor 7%, transparent); }
-code { font-family: ui-monospace, monospace; font-size: .9em; }
-blockquote { margin: 0; padding-left: 1rem; border-left: 3px solid var(--line); }
-table { border-collapse: collapse; }
-th, td { text-align: left; padding: .25rem .75rem; border-bottom: 1px solid var(--line); }
-h2, h3 { margin-top: 2em; }
+/* Docs content: calm neutral code blocks (there is no syntax highlighting), one accent for links. */
+.prose {
+  --tw-prose-links: var(--color-sky-700);
+  --tw-prose-pre-bg: var(--color-neutral-100);
+  --tw-prose-pre-code: var(--color-neutral-800);
+  @variant dark { /* unlayered, so it wins over prose-invert's variables: set the dark values here */
+    --tw-prose-links: var(--color-sky-400);
+    --tw-prose-pre-bg: var(--color-neutral-900);
+    --tw-prose-pre-code: var(--color-neutral-200);
+  }
+
+  :where(h2, h3) { scroll-margin-top: 5rem; } /* clear of the sticky header */
+  h2 { @apply border-t border-neutral-200 pt-6 dark:border-neutral-800; }
+  pre { @apply border border-neutral-200 dark:border-neutral-800; }
+  :not(pre) > code { @apply rounded bg-neutral-100 px-1 py-0.5 font-normal dark:bg-neutral-800; }
+  code::before, code::after { content: none; }
+}
