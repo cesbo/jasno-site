@@ -18,7 +18,10 @@ test('the landing renders; a doc page renders its markdown, navigation and table
   const view = mountTest(t, () => App());
   await settled();
   assert.equal(view.root.querySelector('h1')?.textContent, 'jasno');
+  const docs = view.root.querySelector('nav[aria-label="Main"] a[href="/docs/guide/getting-started"]');
+  assert.equal(docs?.getAttribute('aria-current'), null);
   await router.navigate('/docs/guide/getting-started');
+  assert.equal(docs?.getAttribute('aria-current'), 'true', 'the header Docs link marks the section');
   const h1 = view.root.querySelector('article h1');
   assert.equal(h1?.textContent, 'Getting started');
   assert.ok(document.activeElement === h1, 'the router focuses the new page heading'); // compare nodes with ===
@@ -74,7 +77,10 @@ test('diagnostics pages come from the guides @jasno/core ships', async (t) => {
   await settled();
   assert.equal(view.root.querySelector('article h1')?.textContent, 'Diagnostics');
   assert.ok(view.root.querySelector('article a[href="/docs/diagnostics/FOCUS_LOST"]'), 'the catalogue links every code');
+  const entry = view.root.querySelector('nav[aria-label="Docs"] a[href="/docs/diagnostics"]');
+  assert.equal(entry?.getAttribute('aria-current'), 'page');
   await router.navigate('/docs/diagnostics/FOCUS_LOST');
+  assert.equal(entry?.getAttribute('aria-current'), 'true', 'a code page keeps its section entry current');
   assert.equal(view.root.querySelector('article h1')?.textContent, 'FOCUS_LOST');
   assert.ok(view.root.querySelector('article h2#fix'));
   assert.equal(view.root.querySelector('article h2#fixture'), null, 'the Fixture section names jasno-internal tests');

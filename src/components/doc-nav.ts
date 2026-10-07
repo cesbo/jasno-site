@@ -17,5 +17,5 @@ export const DocNav = component(function DocNav(p: DocNavProps): Node {
     h.ul({ class: 'columns-2 gap-x-4 md:columns-1' }, ...[...sections].map(([title, entries]) =>
       h.li({ class: 'mb-6 break-inside-avoid' }, h.span({ class: 'font-semibold' }, title),
         h.ul({ class: 'mt-2 border-l border-neutral-200 dark:border-neutral-800' }, ...entries.map((e) =>
-          h.li(null, Link({ kind: 'side', href: docHref(e.key), label: e.title, current: () => p.current() === e.key }))))))));
+          h.li(null, Link({ kind: 'side', href: docHref(e.key), label: e.title, current: () => (p.current() === e.key ? 'page' : p.current().startsWith(`${e.key}/`) ? 'true' : null) }))))))));
 });
