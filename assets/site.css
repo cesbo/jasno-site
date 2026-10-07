@@ -7,6 +7,8 @@ html {
   overscroll-behavior: none; /* Safari 16+: no rubber band at the ends, which pulled the sticky header and columns with it */
 }
 
+html:has(dialog[open]) { overflow: hidden; } /* the page does not scroll behind the menu */
+
 @layer base {
   body { @apply bg-white text-neutral-900 antialiased dark:bg-neutral-950 dark:text-neutral-100; }
   button { @apply cursor-pointer rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800; }
@@ -25,7 +27,8 @@ html {
     --tw-prose-pre-code: var(--color-neutral-200);
   }
 
-  :where(h2, h3) { scroll-margin-top: 5rem; } /* clear of the sticky header */
+  /* clear of the sticky header, and on a phone of the menu bar */
+  :where(h2, h3) { scroll-margin-top: 7rem; @variant md { scroll-margin-top: 5rem; } }
   h2 { @apply border-t border-neutral-200 pt-6 dark:border-neutral-800; }
   pre { @apply border border-neutral-200 dark:border-neutral-800; }
   :not(pre) > code { @apply rounded bg-neutral-100 px-1 py-0.5 font-normal dark:bg-neutral-800; }

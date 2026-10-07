@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import type {} from '@jasno/core'; // types for window.__JASNO__
 
 // Every test fails on a page error or a jasno dev warning (FOCUS_LOST, VIEW_NO_HEADING, KEY_ACTIVATES_NEW_FOCUS, ...).
@@ -47,4 +47,40 @@ test('a table-of-contents link scrolls to its section', async ({ page }) => {
   await page.getByRole('navigation', { name: 'On this page' }).getByRole('link', { name: 'What it costs' }).click();
   await expect(page).toHaveURL(/#what-it-costs$/);
   await expect(page.getByRole('heading', { level: 2, name: 'What it costs' })).toBeInViewport();
+});
+
+test('on a phone the page list is in a menu: it opens, a followed link closes it, Escape returns the focus', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 800 });
+  await page.goto('/docs/guide/getting-started');
+  const bar = page.getByRole('button', { name: /^Menu/ });
+  const menu = page.getByRole('dialog', { name: 'Menu' });
+  await expect(page.getByRole('navigation', { name: 'Docs' })).toBeHidden();
+  await bar.click();
+  await expect(menu).toBeVisible();
+  await menu.getByRole('link', { name: 'Why another framework' }).click();
+  await expect(menu).toBeHidden();
+  await expect(page.getByRole('heading', { level: 1, name: 'Why another framework' })).toBeFocused();
+  await bar.click();
+  await page.keyboard.press('Escape');
+  await expect(menu).toBeHidden();
+  await expect(bar).toBeFocused();
+});
+
+// A tap in Safari does not focus a button, so the menu opens with nothing to return the focus to (FOCUS_LOST).
+const openMenuWithoutFocus = async (page: Page): Promise<void> => {
+  await page.setViewportSize({ width: 390, height: 800 });
+  await page.goto('/docs/guide/getting-started');
+  await page.evaluate(() => document.querySelector('dialog')?.showModal());
+};
+
+test('the menu hands the focus to the bar on Close when the bar had none', async ({ page }) => {
+  await openMenuWithoutFocus(page);
+  await page.getByRole('dialog', { name: 'Menu' }).getByRole('button', { name: 'Close' }).press('Enter');
+  await expect(page.getByRole('button', { name: /^Menu/ })).toBeFocused();
+});
+
+test('a link in the menu keeps the focus on the page when the bar had none', async ({ page }) => {
+  await openMenuWithoutFocus(page);
+  await page.getByRole('dialog', { name: 'Menu' }).getByRole('link', { name: 'Why another framework' }).click();
+  await expect(page.getByRole('heading', { level: 1, name: 'Why another framework' })).toBeFocused();
 });
