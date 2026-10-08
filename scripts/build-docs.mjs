@@ -14,7 +14,7 @@ const SECTION_TITLES = { api: 'API', cli: 'CLI' };
 const ERRORS_DIR = 'node_modules/@jasno/core/errors';
 // Every sample starts with these imports (TypeScript ignores what a block does not use), unless the block imports the module itself.
 const PRELUDE = [
-  ['@jasno/core', "import { bindChecked, bindNumber, bindValue, catchError, component, computed, createContext, createRoot, css, each, effect, flush, h, linkedSignal, match, mount, onMount, provide, resource, selector, show, signal, svg, untracked, useContext, type Child, type MaybeRead, type Read, type Resource, type Signal, type WritableSignal } from '@jasno/core';"],
+  ['@jasno/core', "import { bindChecked, bindNumber, bindValue, catchError, component, computed, createContext, createRoot, css, each, effect, flush, h, linkedSignal, match, mount, onMount, optimistic, provide, resource, selector, show, signal, svg, untracked, useContext, type Child, type MaybeRead, type Read, type Resource, type Signal, type WritableSignal } from '@jasno/core';"],
   ['@jasno/core/router', "import { createRouter, route, type Params, type ViewProps } from '@jasno/core/router';"],
 ];
 

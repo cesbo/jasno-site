@@ -130,7 +130,7 @@ For an error that native constraints cannot express, see the [validation](/docs/
 
 A short-lived editor seeds its field once. Use `untracked()` to read the starting value. The [reactivity](/docs/api/reactivity) page has an example.
 
-A form that stays while saves happen needs one more rule. Create the form for each record inside `match()`, with the id of the record as the key. Then the draft and the saving flag never cross records. A save echo, which is a new object with the same id, does not reset the draft.
+A form that stays while saves happen needs one more rule. Create the form for each record inside `match()`, with the id of the record as the key. Then the draft and the saving flag never cross records. A save echo, which is a new object with the same id, does not reset the draft. A routed view with one record needs no `match()`, because a new `:id` builds a new view.
 
 ```ts
 interface Card { readonly id: string; readonly title: string }

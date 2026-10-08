@@ -34,7 +34,7 @@ test('the landing renders; a doc page renders its markdown, navigation and table
   assert.match(nav?.querySelector('li')?.firstChild?.textContent ?? '', /^Guide$/, 'pages are grouped by section');
   assert.equal(view.root.querySelector('nav[aria-label="On this page"] a')?.getAttribute('href'), '#install');
   assert.equal(view.root.querySelector('.pager a')?.textContent, 'Next: Why another framework');
-  await router.navigate('/docs/guide/why'); // same route, the view stays mounted: the article follows the loader data
+  await router.navigate('/docs/guide/why'); // same route, new params: a new view with the new page
   assert.equal(view.root.querySelector('article h1')?.textContent, 'Why another framework');
   assert.equal(document.title, 'Why another framework');
   assert.equal(view.root.querySelector('.pager a')?.textContent, 'Previous: Getting started');

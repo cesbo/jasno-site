@@ -89,27 +89,23 @@ The view reads the result with `p.data()`. If the view declares a data type, the
 
 ## Views
 
-A view is a component. It receives `ViewProps<Pattern, Data>`: `params` and `data` as `Read`s.
+A view is a component. It receives `ViewProps<Pattern, Data>`: `params` and `data` as functions.
 
-A view stays mounted while the same route matches. When only the params change, the view is not rebuilt. Its `params` and `data` update instead. Read them inside functions.
-
-Put work that depends on a param in `match`, so that it starts again for each value.
+`params` and `data` do not change while the view lives. A new route or new path params build a new view, and the router disposes the old one. So the view can read them in setup. Its drafts, its flags and its `onMount` work start again for each record.
 
 ```ts
-const UserBody = component(function UserBody(p: { id: string }): Node {
-  onMount(() => console.log(`Opened user ${p.id}`));
-  return h.p(null, `User ${p.id}`);
-});
-
 export const UserPage = component(function UserPage(
   p: ViewProps<'/users/:id'>,
 ): Node {
-  return h.section(null,
-    h.h1(null, 'User'),
-    match(() => p.params().id, (id) => UserBody({ id })),
-  );
+  const id = p.params().id;
+  onMount(() => console.log(`Opened user ${id}`));
+  return h.section(null, h.h1(null, 'User'), h.p(null, `User ${id}`));
 });
 ```
+
+An effect that reads only `params` or `data` never runs again. Use `onMount` for such work.
+
+A change of the search params keeps the view. Work that depends on a search param goes in `match`, so that it starts again for each value.
 
 ## Links and navigation
 

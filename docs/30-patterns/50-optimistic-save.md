@@ -1,8 +1,8 @@
 # Optimistic save
 
-This pattern changes the value on screen before the save finishes, and it undoes the change when the save fails. The saves of one record run one after another.
+This pattern changes the value on screen before the save finishes. When the save fails, the screen shows the value that the server accepted.
 
-The queue is correct when the server may apply requests in a different order.
+`optimistic()` does this for a resource.
 
 <!-- ts:
 declare function saveTitle(id: string, title: string, signal: AbortSignal): Promise<void>;
@@ -12,51 +12,43 @@ declare const cards: Resource<readonly Card[]>;
 -->
 
 ```ts
-// the last title that the server accepted, while saves are queued
-const confirmed = new Map<string, string>();
-// the last queued save of each card
-const queue = new Map<string, Promise<void>>();
+const save = optimistic(cards, {
+  get: (list, id: string) => list.find((c) => c.id === id)?.title,
+  put: (list, id, title) =>
+    list.map((c) => (c.id === id ? { ...c, title } : c)),
+  send: (id, title, abortSignal) => saveTitle(id, title, abortSignal),
+});
 
-export function rename(id: string, title: string): Promise<void> {
-  if (!cards.hasValue()) return Promise.resolve();
-  const display = (to: string) => {
-    if (cards.hasValue())
-      cards.set(
-        cards.value().map((c) => (c.id === id ? { ...c, title: to } : c)),
-      );
-  };
-  if (!confirmed.has(id))
-    confirmed.set(id, cards.value().find((c) => c.id === id)?.title ?? title);
-  display(title);
-
-  const run: Promise<void> = (queue.get(id) ?? Promise.resolve()).then(
-    async () => {
-      const last = () => queue.get(id) === run;
-      try {
-        await saveTitle(id, title, AbortSignal.timeout(10_000));
-        confirmed.set(id, title);
-        if (last()) display(title);
-      } catch {
-        if (last()) {
-          display(confirmed.get(id) ?? title);
-          toast('Not saved; your change was undone');
-        }
-      } finally {
-        if (last()) { queue.delete(id); confirmed.delete(id); }
-      }
-    },
-  );
-  queue.set(id, run);
-  return run;
+export async function rename(id: string, title: string): Promise<void> {
+  const result = await save(id, title);
+  if (result === 'undone') toast('Not saved; your change was undone');
 }
 ```
 
-Notice these details:
+`optimistic(resource, options)` returns a save function. It takes three functions:
 
-- `set()` runs before the `await`, so the screen changes at once.
-- When the last queued save fails, show the last value that the server accepted. Do not show the value from before this save, because an earlier save may still be unconfirmed.
-- When an earlier save fails, nothing changes. A newer value is still on its way.
-- When the last save succeeds, show its value again. A `reload()` may have replaced it meanwhile.
-- Never call `reload()` after an optimistic save. A reload that fails clears the value.
-- Give each request a timeout.
-- `confirmed` and `queue` are plain module variables. The test helpers do not reset them, so a test must wait for every rename that it starts.
+- `get` reads the field of one record from the resource value. It returns `undefined` when the record is not there.
+- `put` returns a new resource value with the field set.
+- `send` makes the request. Its `abortSignal` times out after 10 seconds. The `timeout` option changes the time.
+
+The key names the record on the server. `send` gets only the key and the value.
+
+## What save does
+
+`save(key, value)` shows the value at once, and then it sends the value. The saves of one key run one after another. So the order stays correct, even when the server may apply requests in a different order.
+
+The promise never rejects. It resolves one of three values:
+
+- `'saved'`: the server accepted the value.
+- `'undone'`: the save failed. The screen shows the last value that the server accepted. Tell the user.
+- `'superseded'`: the save failed, but a newer save of the same key is queued. Nothing changes.
+
+`save()` also resolves `'undone'` when the resource has no value. It then sends nothing.
+
+## Details
+
+- When the last save succeeds, the screen shows its value again. A `reload()` may have replaced it meanwhile.
+- A save never writes into the resource after its params changed. A value that the new params loaded during the save can be older than the save.
+- Never call `reload()` after a save. A reload that fails clears the value.
+- Return the promise from the event handler. Then `settled()` in a test waits for it.
+- The queue is module state. The test helpers do not reset it, so a test must wait for every save that it starts.

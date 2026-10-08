@@ -98,7 +98,7 @@ If a reload fails, `value()` is gone and the status is `error`. `latest()` keeps
 
 `set(value)` replaces the value now and sets the status to `local`. It also aborts a request that is in flight.
 
-After an `await`, the params may have changed. Capture the params before the `await`, and write only if they are still the same. A view stays mounted when only its params change.
+After an `await`, the params may have changed. Capture the params before the `await`, and write only if they are still the same. A routed view needs no such check. A new path param builds a new view, and the resources of the old view then ignore `reload()` and `set()`.
 
 <!-- ts: declare function addNote(id: string, text: string): Promise<void>; declare const notes: Resource<readonly string[]>; declare const id: Read<string>; -->
 
@@ -128,7 +128,7 @@ async function toggle(todo: Todo): Promise<void> {
 }
 ```
 
-This form is correct for one save at a time. Overlapping saves of one record need a queue, and that pattern belongs to the recipes.
+This form is correct for one save at a time. For overlapping saves, use `optimistic()`. The [optimistic save](/docs/patterns/optimistic-save) page shows it.
 
 If you call `set()` while the status is `loading`, the value probably belongs to old params. jasno reports `RESOURCE_SET_WHILE_LOADING`.
 
