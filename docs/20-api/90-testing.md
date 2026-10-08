@@ -66,12 +66,12 @@ To compare two nodes, write `assert.ok(a === b)`. `assert.equal(a, b)` prints bo
 ## Wait for async work
 
 - **`flush()`** runs the pending DOM and effect updates now. Use it after a synchronous change.
-- **`await settled()`** waits until flushes, loaders, navigations and promises that `on*` handlers returned are idle. Use it after an async submit, a lazy view or a loader.
+- **`await settled()`** waits until flushes, loaders, navigations, `optimistic()` saves and promises that `on*` handlers returned are idle. Use it after an async submit, a lazy view or a loader.
 - **`await waitFor(check)`** runs `check` again until it stops throwing. Use it for a state that `settled()` would wait past, such as "Loading" while the test holds the loader.
 
 `settled()` uses the real timers, so `mock.timers` cannot hang it. After 2 seconds it fails with `SETTLE_TIMEOUT`, and the message lists the pending work.
 
-`settled()` sees only the promises that handlers return. Return the promise from the handler: `onclick: () => save()`. Work that a handler starts and does not return is invisible to it.
+`settled()` sees the promises that handlers return, and every queued `optimistic()` save. Return any other promise from the handler: `onclick: () => save()`. Other work that a handler starts and does not return is invisible to it.
 
 ```ts fragment
 const Save = component(function Save(): Node {

@@ -1,6 +1,7 @@
 import { h } from '@jasno/core';
 import { createRouter, route } from '@jasno/core/router';
 import { keyOf, type Doc } from './md.ts';
+import DocsLayout from './layouts/docs.ts';
 import DocView from './views/doc.ts';
 import HomeView from './views/home.ts';
 
@@ -18,6 +19,7 @@ export const router = createRouter([
   route('/', { view: async () => ({ default: HomeView }), title: 'jasno' }),
   route('/docs/:section/:slug?', {
     loader: ({ params, abortSignal }) => loadDoc(keyOf(params), abortSignal),
+    layout: async () => ({ default: DocsLayout }),
     view: async () => ({ default: DocView }),
     title: (d) => d?.title ?? 'Page not found',
   }),

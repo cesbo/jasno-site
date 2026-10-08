@@ -21,6 +21,7 @@ my-app/
     config.dev.ts       values for development
     config.prod.ts      values for production
     views/*.ts          one lazy module for each route
+    layouts/*.ts        layouts that routes share
     components/*.ts     one exported component for each file
     **/*.test.ts        tests next to the code
   e2e/*.spec.ts         Playwright tests
@@ -54,6 +55,7 @@ The template creates `index.html`, `package.json`, both tsconfig files, `playwri
 
 - `main.ts` mounts the app: `mount(App, document.getElementById('app'))`.
 - `app.ts` is the shell: `h.header(null, nav)` and `h.main(null, router.outlet())`. Put providers and a toast region here too.
+- `layouts/*.ts` hold the layouts that routes name. A layout places `p.view` once and has no `h1` or `main` of its own.
 - `routes.ts` is the only place for route patterns. Build URLs with `router.href`, or with relative links such as `?q=x`.
 - `state.ts` holds app-wide signals. Keep state out of component modules.
 - `api.ts` holds typed `fetch` functions. Each takes an `AbortSignal`, and checks the payload before it returns it.

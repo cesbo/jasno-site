@@ -107,6 +107,36 @@ An effect that reads only `params` or `data` never runs again. Use `onMount` for
 
 A change of the search params keeps the view. Work that depends on a search param goes in `match`, so that it starts again for each value.
 
+## Layouts
+
+A layout is UI that several routes share, such as the page list of a section. A route names it as a lazy module, like its view.
+
+```ts fragment
+route('/docs', { layout: () => import('./layouts/docs.ts'), view: () => import('./views/docs-index.ts') }),
+route('/docs/:page', { layout: () => import('./layouts/docs.ts'), view: () => import('./views/doc.ts') }),
+```
+
+The module exports a component that gets `LayoutProps`. Its one prop, `view`, is the place for the page.
+
+<!-- ts: declare function DocsNav(): Node; -->
+
+```ts
+export default component(function DocsLayout(p: LayoutProps): Node {
+  return h.div({ class: 'docs' }, DocsNav(), p.view);
+});
+```
+
+When the next route names the same layout, the layout stays. It keeps its DOM, its scroll and its state. The router builds only the view again, inside it. This holds for new params of one route and for other routes.
+
+- Put `p.view` in the layout once, outside `show` and `match`. A layout that leaves it out fails the navigation. In development, so does a layout that places it inside a branch.
+- A layout gets no params, because it outlives them. Read the URL with `router.url()`. Mark the current page with `aria-current`, as in the [navigation menu](/docs/patterns/navigation-menu) pattern.
+- Focus and the announcement come from the view, never from the layout. So the layout has no `h1`. App already holds `<main>`, so the layout has no `main` either.
+- A layout loads its own data with a `resource`.
+- Context that the layout provides does not reach the view. Provide it in App, above the outlet.
+- `notFound` and the error view render without a layout.
+
+Keep one `router.outlet()`. An outlet in each branch of a `show` loses the focus move, and jasno reports `OUTLET_MOVED`.
+
 ## Links and navigation
 
 `router.href(pattern, params)` builds a URL. TypeScript requires the params when the pattern has required params. A number is allowed. jasno encodes each segment.
@@ -177,9 +207,9 @@ After a navigation to a new view or new params, the page scrolls to the top. On 
 
 ## Errors
 
-If a loader fails, the router renders `error(error, retry)` in the outlet. The same happens when the import of a view fails, or when the setup, a binding or an effect of the view throws. `retry()` runs the navigation to the current URL again. The next navigation also rebuilds the view.
+If a loader fails, the router renders `error(error, retry)` in the outlet. The same happens when the import of a view or a layout fails. It also happens when the setup, a binding or an effect of the view or its layout throws. `retry()` runs the navigation to the current URL again. The next navigation also rebuilds the view.
 
-A view import can fail after a deploy, when a tab still holds old file names. The router then reports `VIEW_IMPORT_FAILED` and loads the target URL as a full page, once. If it fails again, the router renders the error view.
+A view or layout import can fail after a deploy, when a tab still holds old file names. The router then reports `VIEW_IMPORT_FAILED` and loads the target URL as a full page, once. If it fails again, the router renders the error view.
 
 ## Hash mode
 
@@ -196,7 +226,8 @@ In this mode, every fragment belongs to the app. A plain `h.a({ href: '?q=x' })`
 | [`ROUTE_SHADOWED`](/docs/diagnostics/ROUTE_SHADOWED) | an earlier route matches all the paths of a later route |
 | [`INVALID_ROUTE_PATTERN`](/docs/diagnostics/INVALID_ROUTE_PATTERN) | a pattern that matches every path |
 | [`OUTLET_ALREADY_ACTIVE`](/docs/diagnostics/OUTLET_ALREADY_ACTIVE) | `outlet()` is called while another outlet is active |
+| [`OUTLET_MOVED`](/docs/diagnostics/OUTLET_MOVED) | an outlet is disposed and another one renders in the same flush |
 | [`ROUTER_NOT_STARTED`](/docs/diagnostics/ROUTER_NOT_STARTED) | `navigate()` or `back()` is called before `outlet()` |
 | [`VIEW_NO_HEADING`](/docs/diagnostics/VIEW_NO_HEADING) | a view has no `[autofocus]` element and no `h1` |
-| [`VIEW_IMPORT_FAILED`](/docs/diagnostics/VIEW_IMPORT_FAILED) | the import of a view module fails, usually after a deploy |
+| [`VIEW_IMPORT_FAILED`](/docs/diagnostics/VIEW_IMPORT_FAILED) | the import of a view or layout module fails, usually after a deploy |
 | [`USE_ROUTER`](/docs/diagnostics/USE_ROUTER) | code uses `history` or `location` directly |

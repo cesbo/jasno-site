@@ -50,5 +50,5 @@ The promise never rejects. It resolves one of three values:
 - When the last save succeeds, the screen shows its value again. A `reload()` may have replaced it meanwhile.
 - A save never writes into the resource after its params changed. A value that the new params loaded during the save can be older than the save.
 - Never call `reload()` after a save. A reload that fails clears the value.
-- Return the promise from the event handler. Then `settled()` in a test waits for it.
+- `settled()` in a test waits for every queued save, also for a save that the handler did not return.
 - The queue is module state. The test helpers do not reset it, so a test must wait for every save that it starts.
