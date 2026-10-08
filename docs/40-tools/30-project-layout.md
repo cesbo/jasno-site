@@ -69,8 +69,8 @@ Everything under `src/` is public. Do not put secrets there.
 - Use kebab-case file names. Write the `.ts` extension in relative imports, or jasno reports `TS_EXTENSION`. Use `import type` for types.
 - Import packages by their bare name. Do not write barrel files.
 - Put the styles of a component next to it, with `css`, under a root class that the component sets.
-- Keep a detail over a list in a search param of the list route, and close it with `router.back()`.
-- Put work that depends on a route param in a `match` body that is keyed on the param.
+- Put a modal detail over a list in a search param of the list route, and close it with `router.back()`. Make a detail page a path route, with the list as the layout that both routes share.
+- A new path param builds a new view, so the view reads its params in setup. Put work that depends on a search param in a `match` body that is keyed on it.
 
 ## assets and public
 

@@ -183,7 +183,10 @@ const search = h.input({
 
 A change of the search params or the hash alone does not rebuild the view. It runs no loader, and it does not move focus or scroll. `url` updates before `navigate()` returns, so an input that is bound to it never drops a keystroke.
 
-For this reason, keep a detail over a list in a search param, such as `?card=7`. The list stays mounted with its scroll position, its focus and its drafts. Back closes the detail.
+A detail over a list has two shapes:
+
+- **A modal detail**, such as a card in a dialog, goes in a search param of the list route: `?card=7`. The list stays mounted with its scroll position, its focus and its drafts. No loader runs. Back closes the detail.
+- **A detail page** beside the list, with its own loader, title and heading, is a path route: `/cards/7`. Make the list the [layout](#layouts) that both routes share. Then the list stays, and only the detail is built again. Without the layout, a path route builds the list again too.
 
 ## Focus and title
 
