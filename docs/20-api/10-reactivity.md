@@ -22,7 +22,7 @@ Types enforce the rule. A live input has the type `Read<T>`: a function with no 
 
 Some props are usually constant and sometimes live, for example a label or a hint. These props have the type `MaybeRead<T>`. The caller passes `'Default'` or `() => text()`. Element props and children accept both.
 
-Names from other frameworks are type errors. `createSignal`, `useState`, `createMemo`, `useEffect` and `batch` exist only as stubs. The type of each stub is the error message, and it points to the jasno form.
+Names from other frameworks are type errors. `createSignal`, `useState`, `createMemo`, `useEffect`, `useOptimistic` and `batch` exist only as stubs. The type of each stub is the error message, and it points to the jasno form.
 
 ## Signals
 
