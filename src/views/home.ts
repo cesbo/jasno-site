@@ -38,6 +38,13 @@ export default component(function HomeView(): Node {
         '});',
       ].join('\n'))),
       h.p(null, Counter()),
-      h.p(null, 'Coding agents: ', h.a({ href: '/llms.txt' }, 'llms.txt'), ' and the AGENTS.md that every new project gets.')),
+      h.h2(null, 'Build with an AI agent'),
+      h.p(null, 'The jasno agent skill shows a coding agent how to create a project, build it, verify it and deploy it: ',
+        h.a({ href: '/skills/jasno/SKILL.md' }, 'https://jasno.dev/skills/jasno/SKILL.md'), '.'),
+      h.p(null, 'Install it for Claude Code, Codex, Cursor, or another agent that reads skills:'),
+      h.pre(null, h.code(null, 'npx skills@latest add https://jasno.dev/skills/jasno/SKILL.md')),
+      h.p(null, 'You can also give the link to the agent without installing the skill:'),
+      h.pre(null, h.code(null, 'Read https://jasno.dev/skills/jasno/SKILL.md and build a site for …')),
+      h.p(null, 'Docs for agents: ', h.a({ href: '/llms.txt' }, 'llms.txt'), ' and the AGENTS.md that every new project gets.')),
   );
 });

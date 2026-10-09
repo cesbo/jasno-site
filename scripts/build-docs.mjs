@@ -150,6 +150,8 @@ writeFileSync('public/llms.txt', `# jasno
 
 > ${TAGLINE}
 
+Agent skill for building with jasno: [${ORIGIN}/skills/jasno/SKILL.md](${ORIGIN}/skills/jasno/SKILL.md). It covers creating a project, the guide to read, the CSP, verification and deploy. It works when read in place. To install it: \`npx skills@latest add ${ORIGIN}/skills/jasno/SKILL.md\`.
+
 ## Docs
 
 ${index.map((e) => `- [${e.title}](${ORIGIN}/docs/${e.key}.md)`).join('\n')}
