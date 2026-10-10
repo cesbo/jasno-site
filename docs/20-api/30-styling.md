@@ -50,7 +50,7 @@ Put a CSS file in `assets/` and link it from `index.html`.
 <link rel="stylesheet" href="/assets/site.css">
 ```
 
-`jasno dist` copies the file as it is, with the same name. Put images and fonts in `assets/` too, and refer to them by the root path: `url('/assets/logo.png')`. A file under `src/` is not published, and jasno reports `ASSET_OUTSIDE_ASSETS` for a URL that points to it.
+`jasno build` copies the file as it is, with the same name. Put images and fonts in `assets/` too, and refer to them by the root path: `url('/assets/logo.png')`. A file under `src/` is not published, and jasno reports `ASSET_OUTSIDE_ASSETS` for a URL that points to it.
 
 ## Tailwind
 
@@ -60,7 +60,7 @@ jasno compiles a style sheet in `assets/` with Tailwind when the sheet imports i
 2. Create `assets/app.css` with one line: `@import "tailwindcss";`.
 3. Link `/assets/app.css` from `index.html`, as in the example above.
 
-There is no script, no watcher and no configuration option. `jasno dev` compiles the sheet on every request. `jasno dist` writes the compiled, minified sheet under the same name. Tailwind runs from the root of your project, so it scans `src/` and `index.html` for class names. Your project pins the Tailwind version.
+There is no script, no watcher and no configuration option. `jasno dev` compiles the sheet on every request. `jasno build` writes the compiled, minified sheet under the same name. Tailwind runs from the root of your project, so it scans `src/` and `index.html` for class names. Your project pins the Tailwind version.
 
 Write the class names in full. Tailwind finds a class by reading the source text, so it cannot find a name that you build from parts.
 
@@ -74,7 +74,7 @@ const field = h.input({
 });
 ```
 
-A style sheet without the `@import "tailwindcss"` line is copied as it is. If the CLI is missing, or if Tailwind fails on the sheet, jasno reports `TAILWIND_FAILED`. In `jasno dev` the request gets a 500 response, and `jasno dist` writes nothing.
+A style sheet without the `@import "tailwindcss"` line is copied as it is. If the CLI is missing, or if Tailwind fails on the sheet, jasno reports `TAILWIND_FAILED`. In `jasno dev` the request gets a 500 response, and `jasno build` writes nothing.
 
 ## Mistakes this catches
 

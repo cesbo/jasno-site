@@ -47,7 +47,7 @@ export const App = component(function App(): Node {
 });
 ```
 
-In a real app, each view is a module with a default export. The route imports it lazily, and `jasno dist` makes one chunk for each view.
+In a real app, each view is a module with a default export. The route imports it lazily, and `jasno build` makes one chunk for each view.
 
 ```ts fragment
 route('/users/:id', { view: () => import('./views/user.ts') })

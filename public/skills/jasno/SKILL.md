@@ -42,7 +42,7 @@ The full tree and its conventions: https://jasno.dev/docs/tools/project-layout.m
 
 ### The CSP
 
-`jasno dist` ships a strict CSP: `script-src 'self'` and `trusted-types 'none'`. Plan for it from the start.
+`jasno build` ships a strict CSP: `script-src 'self'` and `trusted-types 'none'`. Plan for it from the start.
 
 - No `innerHTML`, so no library that renders HTML strings. Write content as `h.*` calls, or convert markdown to nodes at build time.
 - No third-party `<script>`, such as analytics or chat widgets. Each one needs a change of the CSP: ask the user first.
@@ -58,7 +58,7 @@ Each command must exit with 0. A non-zero exit is a failure.
 1. `npm run check`: tsc for the app and the tests, and the jasno rules.
 2. `npm test`: component tests with `node:test` and happy-dom.
 3. `npx playwright install` once, then `npm run e2e`: browser tests. Playwright starts `npm run dev` itself.
-4. `npm run dist && JASNO_E2E=preview npm run e2e`: the same tests against the production build, served by `npm run preview`.
+4. `npm run build && JASNO_E2E=preview npm run e2e`: the same tests against the production build, served by `npm run preview`.
 
 Each problem has a code. `npm run explain CODE` prints its repair guide. In development, `window.__JASNO__.diagnostics()` lists the current problems.
 
@@ -66,7 +66,7 @@ If a step cannot run, tell the user. Never say that it passed.
 
 ## 5. Deploy
 
-`npm run dist` writes a static site into `dist/`. It includes `_headers` with the CSP and `_redirects` with the fallback to `index.html`.
+`npm run build` writes a static site into `dist/`. It includes `_headers` with the CSP and `_redirects` with the fallback to `index.html`.
 
 - Netlify and Cloudflare Pages read both files. Upload `dist/` as it is.
 - Another host must send the CSP header from `_headers` and serve `index.html` for app URLs.

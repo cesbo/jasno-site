@@ -101,7 +101,7 @@ function diagnostics() {
     const md = readFileSync(join(ERRORS_DIR, f), 'utf8').replace(/\n## Fixture\n[\s\S]*?(?=\n## |$)/, '\n');
     const m = /^\*\*([^*]+)\*\*, ([^:]+):\s*(.*)$/m.exec(md); // "**warn**, runtime, dev builds: summary"
     const where = m?.[2] ?? '';
-    const group = where.includes('runtime') ? 'Runtime' : where.includes('testing') ? 'Testing' : 'jasno check, dev and dist';
+    const group = where.includes('runtime') ? 'Runtime' : where.includes('testing') ? 'Testing' : 'jasno check, dev and build';
     codes.push({ code, severity: m?.[1] ?? '', group, summary: m?.[3] ?? '' });
     emit(`diagnostics/${code}`, md, { nav: false });
   }
@@ -110,7 +110,7 @@ function diagnostics() {
 
 Every code jasno can report, with what it means and how to fix it. In development the message carries the code, and \`npm run explain CODE\` prints the same guide in the terminal.
 
-${['Runtime', 'Testing', 'jasno check, dev and dist'].filter((g) => groups.has(g)).map((g) => `## ${g}
+${['Runtime', 'Testing', 'jasno check, dev and build'].filter((g) => groups.has(g)).map((g) => `## ${g}
 
 ${groups.get(g).map((c) => `- [\`${c.code}\`](/docs/diagnostics/${c.code}), ${c.severity}: ${c.summary}`).join('\n')}`).join('\n\n')}
 `, { nav: true });

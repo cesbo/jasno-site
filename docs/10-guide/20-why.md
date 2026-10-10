@@ -6,7 +6,7 @@ The parts of jasno are familiar. The reactive core is alien-signals, the same al
 
 ## What is different
 
-- **Zero configuration.** A jasno project has no bundler config and no test config. `jasno dist` bundles with Rolldown, and there is no file to configure. `jasno dev` strips the types and serves each file as the browser runs it. Tests run on `node:test`, without jest or vitest. In most projects this setup is a task of its own. See [CLI](/docs/tools/cli) and [Testing](/docs/api/testing).
+- **Zero configuration.** A jasno project has no bundler config and no test config. `jasno build` bundles with Rolldown, and there is no file to configure. `jasno dev` strips the types and serves each file as the browser runs it. Tests run on `node:test`, without jest or vitest. In most projects this setup is a task of its own. See [CLI](/docs/tools/cli) and [Testing](/docs/api/testing).
 - **Validation is almost free.** The browser validates. JavaScript adds only the cross-field rules, through `setCustomValidity`. Other frameworks usually need a form library and a schema library. In jasno this is a habit of the framework, not a mechanism. See [Validation](/docs/api/validation).
 - **Granular reactivity.** Each piece of the interface can depend on its own signal, for example `show(() => applicable().has(key))` for one field. Typing into one field updates only that field. A framework that re-renders from one draft object in component state re-renders the whole form on every keystroke. Vue behaves like jasno here.
 - **The element is a value, with no refs.** Write `const heading = h.h1(...)`. Then call `heading.focus()` before you delete a row of a list. Focus is easy to forget. The `FOCUS_LOST` diagnostic reminds you. See [Accessibility](/docs/guide/accessibility).

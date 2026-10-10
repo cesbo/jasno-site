@@ -174,7 +174,7 @@ test.afterEach(async ({ page }) => {
 
 With this hook, `FOCUS_LOST`, `KEY_ACTIVATES_NEW_FOCUS` and `VIEW_NO_HEADING` fail the test.
 
-The production build has no `window.__JASNO__`. To test it, run `npm run dist`, then `JASNO_E2E=preview npx playwright test`. In this mode only page errors fail a test. Remove the `not.toBeNull()` check for that mode.
+The production build has no `window.__JASNO__`. To test it, run `npm run build`, then `JASNO_E2E=preview npx playwright test`. In this mode only page errors fail a test. Remove the `not.toBeNull()` check for that mode.
 
 ## The order of checks
 
@@ -183,7 +183,7 @@ Run the checks from the fastest to the slowest. A command that exits with a non-
 1. `npm run check` runs `tsc` for both programs and the jasno rules. It takes a second or two.
 2. `npm test` runs the component tests.
 3. `npx playwright test` runs the browser tests against `npm run dev`.
-4. In CI, `npm run dist` and `JASNO_E2E=preview npx playwright test` test the shipped build.
+4. In CI, `npm run build` and `JASNO_E2E=preview npx playwright test` test the shipped build.
 
 ## Mistakes this catches
 

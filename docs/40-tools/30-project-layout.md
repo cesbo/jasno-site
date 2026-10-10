@@ -49,7 +49,7 @@ The template creates `index.html`, `package.json`, both tsconfig files, `playwri
 </html>
 ```
 
-`<!--jasno:head-->` is the slot where `jasno dev` and `jasno dist` write the import map. Never write an import map yourself. The `<title>` is the title that a route without a title restores.
+`<!--jasno:head-->` is the slot where `jasno dev` and `jasno build` write the import map. Never write an import map yourself. The `<title>` is the title that a route without a title restores.
 
 ## src
 
@@ -76,11 +76,11 @@ Everything under `src/` is public. Do not put secrets there.
 
 Files in `assets/` are published with the same names. Refer to them by the root path: `'/assets/logo.png'`. A style sheet in `assets/` can import Tailwind. The [styling](/docs/api/styling) page has the details.
 
-Files in `public/` are copied to the root of the site: `robots.txt`, `favicon.ico`. A file in `public/` cannot have the name of a file that `jasno dist` generates.
+Files in `public/` are copied to the root of the site: `robots.txt`, `favicon.ico`. A file in `public/` cannot have the name of a file that `jasno build` generates.
 
 ## npm packages
 
-Add a package to `dependencies` and import it by its bare name: `import { z } from 'zod'`. `jasno dev` serves each file of the package. `jasno dist` bundles the package into the chunks.
+Add a package to `dependencies` and import it by its bare name: `import { z } from 'zod'`. `jasno dev` serves each file of the package. `jasno build` bundles the package into the chunks.
 
 The package must ship ES modules for the browser. A package with CommonJS, with an unguarded `process.env` read, or with an import that does not resolve, fails with `DEP_NOT_BROWSER_ESM`. Use another version of the package, or another package.
 
@@ -88,7 +88,7 @@ jasno reports `IMPORT_NOT_MAPPED` for an import of a package that is not in `dep
 
 ## Config and mocks
 
-The `imports` field of `package.json` can choose a module by condition. `jasno dev` and `npm test` use the `development` condition. `jasno dist` uses the `default` condition.
+The `imports` field of `package.json` can choose a module by condition. `jasno dev` and `npm test` use the `development` condition. `jasno build` uses the `default` condition.
 
 ```json
 {
@@ -115,15 +115,15 @@ export const listUsers: typeof Api.listUsers = async () => [
 
 Under `jasno dev`, the mock answers instead of `fetch`. A Playwright `page.route` stub, for example an error or a slow response, reaches only the real module. Run those browser tests against the production build: `JASNO_E2E=preview`.
 
-To add a condition for your own aliases, use `jasno dist --condition <name>`.
+To add a condition for your own aliases, use `jasno build --condition <name>`.
 
 ## Deploy
 
-`jasno dist` writes a static site into `dist/`. Upload it to a static host.
+`jasno build` writes a static site into `dist/`. Upload it to a static host.
 
 - A host that reads `_headers` and `_redirects`, such as Netlify and Cloudflare Pages, applies the CSP and the fallback for you.
 - On another host, do two things yourself. Send the CSP header from `_headers`. Serve `index.html` for app URLs, and answer 404 for a missing file under `/src/*` and `/assets/*`.
-- A server that sets its own CSP needs the nonce variant. Use `jasno dist --nonce`.
+- A server that sets its own CSP needs the nonce variant. Use `jasno build --nonce`.
 - A server that serves the files from one directory, and `index.html` from another path, needs `--prefix`.
 
 The app is served at the root of the origin. For a server that has one fixed path and no fallback for other paths, use [hash mode](/docs/api/router) of the router.

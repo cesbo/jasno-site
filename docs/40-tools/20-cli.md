@@ -1,6 +1,6 @@
 # CLI
 
-The `jasno` command has five subcommands: `check`, `dev`, `dist`, `preview` and `explain`. Run them through the npm scripts of your project, such as `npm run check`.
+The `jasno` command has five subcommands: `check`, `dev`, `build`, `preview` and `explain`. Run them through the npm scripts of your project, such as `npm run check`.
 
 All subcommands exit with 0 on success and with 1 on failure. They print one line for each problem, in the form `file:line:col CODE message`. With `--json`, they print one JSON object for each line.
 
@@ -8,7 +8,7 @@ All subcommands exit with 0 on success and with 1 on failure. They print one lin
 |---|---|---|
 | `npm run check` | `jasno check` | Type-checks the app and the tests, and runs the jasno rules |
 | `npm run dev` | `jasno dev` | Starts the development server |
-| `npm run dist` | `jasno dist` | Builds the app for production into `dist/` |
+| `npm run build` | `jasno build` | Builds the app for production into `dist/` |
 | `npm run preview` | `jasno preview` | Serves `dist/` as a static host does |
 | `npm run explain CODE` | `jasno explain` | Prints the repair guide of a diagnostic code |
 
@@ -38,9 +38,9 @@ The server serves only an allowlist: `index.html`, the modules in `src/`, the fi
 
 If a second `jasno dev` starts in the same project, it reuses the running server.
 
-## dist
+## build
 
-`jasno dist` builds the app into `dist/`. It bundles with Rolldown. The bundle contains only what the entry reaches. A module that nothing imports does not ship.
+`jasno build` builds the app into `dist/`. It bundles with Rolldown. The bundle contains only what the entry reaches. A module that nothing imports does not ship.
 
 The output has these parts:
 
@@ -52,13 +52,13 @@ The output has these parts:
 
 | Option | Meaning |
 |---|---|
-| `--list` | prints the exact list of files that `dist` writes |
+| `--list` | prints the exact list of files that `build` writes |
 | `--keep N` | keeps the hashed files of the last N deploys, so open tabs keep working |
 | `--condition <name>` | adds a condition for the `imports` field of your `package.json` |
 | `--nonce` | prints a CSP variant with a nonce, for servers that set the policy themselves |
 | `--prefix /path/` | publishes `src/` and `assets/` under a URL path. `index.html` stays at the root. |
 
-`dist` fails with `FILE_NOT_PUBLISHED` when browser code imports a file that it does not publish. It fails with `SECRET_FILE_IN_OUTPUT` when `src/`, `assets/` or `public/` contains a `.env*`, `.pem` or `.key` file.
+`build` fails with `FILE_NOT_PUBLISHED` when browser code imports a file that it does not publish. It fails with `SECRET_FILE_IN_OUTPUT` when `src/`, `assets/` or `public/` contains a `.env*`, `.pem` or `.key` file.
 
 ## preview
 
@@ -81,6 +81,6 @@ A code without a guide, such as a TypeScript `TS2322`, prints its rows from the 
 | Code | When |
 |---|---|
 | [`IMPORT_MAP_HANDWRITTEN`](/docs/diagnostics/IMPORT_MAP_HANDWRITTEN) | `index.html` already contains an import map |
-| [`FILE_NOT_PUBLISHED`](/docs/diagnostics/FILE_NOT_PUBLISHED) | browser code imports a file that `jasno dist` does not publish |
+| [`FILE_NOT_PUBLISHED`](/docs/diagnostics/FILE_NOT_PUBLISHED) | browser code imports a file that `jasno build` does not publish |
 | [`SECRET_FILE_IN_OUTPUT`](/docs/diagnostics/SECRET_FILE_IN_OUTPUT) | a published directory contains a secret file |
 | [`TSCONFIG_DRIFT`](/docs/diagnostics/TSCONFIG_DRIFT) | a TypeScript config differs from the setup that jasno requires |
