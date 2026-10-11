@@ -82,7 +82,7 @@ Files in `public/` are copied to the root of the site: `robots.txt`, `favicon.ic
 
 Add a package to `dependencies` and import it by its bare name: `import { z } from 'zod'`. `jasno dev` serves each file of the package. `jasno build` bundles the package into the chunks.
 
-The package must ship ES modules for the browser. A package with CommonJS, with an unguarded `process.env` read, or with an import that does not resolve, fails with `DEP_NOT_BROWSER_ESM`. Use another version of the package, or another package.
+The package must ship ES modules for the browser. A package without an `exports` field resolves to its `module` file before `main`, as bundlers do. A package with CommonJS, with an unguarded `process.env` read, or with an import that does not resolve, fails with `DEP_NOT_BROWSER_ESM`. Use another version of the package, or another package.
 
 jasno reports `IMPORT_NOT_MAPPED` for an import of a package that is not in `dependencies` (a package in `devDependencies` does not count).
 

@@ -28,7 +28,7 @@ There is only one way to write an element. There is no `h('div')`, no JSX and no
 
 ## Props
 
-Props are the DOM properties of the element, plus `aria-*` and `data-*`. The set is closed. It comes from `lib.dom`, so a typo is a type error. `'aria-lable'` does not compile.
+Props are the DOM properties of the element, plus `aria-*`, `data-*`, `list` and `form`. The set is closed. It comes from `lib.dom`, so a typo is a type error. `'aria-lable'` does not compile.
 
 A function value is live. Any other value is set once. This is the rule from the [reactivity](/docs/api/reactivity) page.
 
@@ -45,6 +45,8 @@ const toggle = h.button({
 A live prop can return `undefined`. The element then goes back to its state at creation. An attribute that the element did not have at creation is removed. For this reason a link never gets `href=""`.
 
 `aria-*` keys are a closed set of 51 names. A boolean value becomes the text `'true'` or `'false'`. `data-*` keys are open.
+
+`list` and `form` take an id: `h.input({ list: 'fruits', form: 'order' })`. Their DOM properties are read-only, so jasno sets the attribute.
 
 For an HTML attribute that has a different DOM name, use the DOM name: `htmlFor`, not `for`.
 

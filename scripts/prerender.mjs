@@ -13,7 +13,7 @@ const template = readFileSync('dist/index.html', 'utf8');
 if (!template.includes('<div id="app"></div>')) throw new Error('prerender: dist/index.html has no <div id="app"></div>');
 const escape = (s) => s.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('"', '&quot;');
 
-// The docs pages are whatever jasno dist copied from public/docs/: one JSON per page.
+// The docs pages are whatever jasno build copied from public/docs/: one JSON per page.
 const docPages = readdirSync('dist/docs', { recursive: true }).map(String).filter((f) => f.endsWith('.json')).sort()
   .map((f) => { const key = f.slice(0, -5).split(sep).join('/'); return [`/docs/${key}`, `dist/docs/${key}/index.html`, key]; });
 const pages = [
