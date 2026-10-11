@@ -35,6 +35,7 @@ Before the install, the same files are at https://raw.githubusercontent.com/cesb
 - `src/app.ts` is the shell: the header with the menu, and `router.outlet()` in `<main>`.
 - UI that a section shares, such as a side menu, is a layout in `src/layouts/`.
 - Put one component in each file of `src/components/`, app-wide signals in `src/state.ts` and `fetch` functions in `src/api.ts`.
+- Call the backend with relative URLs. In development, `npm run dev -- --proxy=/api/=http://127.0.0.1:8000` forwards them to the backend, WebSockets included.
 - Images, fonts and style sheets go in `assets/`. Files for the root of the site, such as `robots.txt`, go in `public/`.
 - Style with `` css`...` `` under a root class, or with Tailwind (https://jasno.dev/docs/api/styling.md). Never remove the focus outline.
 

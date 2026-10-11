@@ -115,6 +115,8 @@ export const listUsers: typeof Api.listUsers = async () => [
 
 Under `jasno dev`, the mock answers instead of `fetch`. A Playwright `page.route` stub, for example an error or a slow response, reaches only the real module. Run those browser tests against the production build: `JASNO_E2E=preview`.
 
+A running backend can answer in development too. Start `jasno dev` with `--proxy`, and map `development` of `#api` to `./src/api.ts`. The [CLI](/docs/tools/cli) page describes the proxy.
+
 To add a condition for your own aliases, use `jasno build --condition <name>`.
 
 ## Deploy

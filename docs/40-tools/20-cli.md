@@ -50,7 +50,26 @@ The server serves only an allowlist: `index.html`, the modules in `src/`, the fi
 - **Fallback.** A request for HTML without a file extension and without a matching file gets `index.html`.
 - **Tailwind.** A style sheet in `assets/` that imports Tailwind is compiled on each request. The [styling](/docs/api/styling) page has the details.
 
-If a second `jasno dev` starts in the same project, it reuses the running server.
+### Proxy
+
+`--proxy <path>=<target>` forwards all requests under a path to a backend. Give the option once for each path.
+
+```sh
+npm run dev -- --proxy=/api/=http://127.0.0.1:8000 --proxy=/control/=http://127.0.0.1:8000
+```
+
+You can also put the options in the `dev` script of `package.json`.
+
+- **Requests.** The server forwards every method, and WebSocket connections too. The path and the query do not change.
+- **Origin.** The app and the backend share one origin, as behind a reverse proxy in production. Relative URLs, cookies and `` new WebSocket(`ws://${location.host}/api/`) `` work without changes.
+- **Responses.** The response of the backend reaches the browser unchanged, without the development CSP.
+- **Paths.** The path starts and ends with `/`. It cannot be `/` or a path under `/__jasno/`. When two paths match, the longer one wins.
+- **Target.** The target is an `http` or `https` origin, without a path.
+- **Errors.** When the backend does not answer, the server gives a 502 response and prints the error.
+
+The `Host` check applies to the forwarded requests too.
+
+If a second `jasno dev` starts in the same project with the same `--proxy` options, it reuses the running server. With other `--proxy` options, it exits with 1. Stop the running server first.
 
 ## build
 
