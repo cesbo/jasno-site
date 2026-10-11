@@ -62,6 +62,21 @@ jasno compiles a style sheet in `assets/` with Tailwind when the sheet imports i
 
 There is no script, no watcher and no configuration option. `jasno dev` compiles the sheet on every request. `jasno build` writes the compiled, minified sheet under the same name. Tailwind runs from the root of your project, so it scans `src/` and `index.html` for class names. Your project pins the Tailwind version.
 
+A library that uses Tailwind names its sources with `@source` in a style sheet that apps import. Tailwind does not scan `node_modules`, and npm links workspace packages there too. A path in `@source` is relative to the style sheet that holds it.
+
+```css
+/* theme.css in the library, exported as "./theme.css" in its package.json */
+@source "./src";
+```
+
+```css
+/* assets/app.css in the app */
+@import "tailwindcss";
+@import "@acme/ui/theme.css";
+```
+
+If a library has no such style sheet, add `@source` with the path to its sources to `assets/app.css`.
+
 Write the class names in full. Tailwind finds a class by reading the source text, so it cannot find a name that you build from parts.
 
 ```ts
