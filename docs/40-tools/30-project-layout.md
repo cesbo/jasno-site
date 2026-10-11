@@ -124,7 +124,7 @@ To add a condition for your own aliases, use `jasno build --condition <name>`.
 `jasno build` writes a static site into `dist/`. Upload it to a static host.
 
 - A host that reads `_headers` and `_redirects`, such as Netlify and Cloudflare Pages, applies the CSP and the fallback for you.
-- On another host, do two things yourself. Send the CSP header from `_headers`. Serve `index.html` for app URLs, and answer 404 for a missing file under `/src/*` and `/assets/*`.
+- On another host, do two things yourself. Send the CSP header from `_headers`. The `headers` key of `.jasno/manifest.json` has the same rules as JSON. Serve `index.html` for app URLs, and answer 404 for a missing file under `/src/*` and `/assets/*`.
 - A server that sets its own CSP needs the nonce variant. Use `jasno build --nonce`.
 - A server that serves the files from one directory, and `index.html` from another path, needs `--prefix`.
 

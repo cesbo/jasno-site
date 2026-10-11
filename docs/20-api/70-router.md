@@ -159,7 +159,7 @@ The router intercepts same-origin links whose path matches a route. It also inte
 
 `router.isLoading` is true while a navigation loads data or a view.
 
-Never use `history` or `location` yourself. The router does not see a URL that you push by hand. `jasno check` reports `USE_ROUTER`.
+Never change the URL with `history` yourself. The router does not see a URL that you push by hand. Do not read the URL from `location` or `document.URL` either. Such a read is a snapshot, and your view does not update. Read `router.url` instead. `jasno check` reports `USE_ROUTER` in every app that imports the router. A write such as `location.href = '/login'` loads a new page, and it is not reported.
 
 ## Search params
 
@@ -233,4 +233,4 @@ In this mode, every fragment belongs to the app. A plain `h.a({ href: '?q=x' })`
 | [`ROUTER_NOT_STARTED`](/docs/diagnostics/ROUTER_NOT_STARTED) | `navigate()` or `back()` is called before `outlet()` |
 | [`VIEW_NO_HEADING`](/docs/diagnostics/VIEW_NO_HEADING) | a view has no `[autofocus]` element and no `h1` |
 | [`VIEW_IMPORT_FAILED`](/docs/diagnostics/VIEW_IMPORT_FAILED) | the import of a view or layout module fails, usually after a deploy |
-| [`USE_ROUTER`](/docs/diagnostics/USE_ROUTER) | code uses `history` or `location` directly |
+| [`USE_ROUTER`](/docs/diagnostics/USE_ROUTER) | code changes the URL with `history` or reads it from `location` |

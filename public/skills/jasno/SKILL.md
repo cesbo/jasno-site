@@ -70,6 +70,6 @@ If a step cannot run, tell the user. Never say that it passed.
 `npm run build` writes a static site into `dist/`. It includes `_headers` with the CSP and `_redirects` with the fallback to `index.html`.
 
 - Netlify and Cloudflare Pages read both files. Upload `dist/` as it is.
-- Another host must send the CSP header from `_headers` and serve `index.html` for app URLs.
+- Another host must send the CSP header from `_headers` and serve `index.html` for app URLs. `dist/.jasno/manifest.json` has the same header rules as JSON, under `headers`.
 
 Details: the Deploy section of https://jasno.dev/docs/tools/project-layout.md

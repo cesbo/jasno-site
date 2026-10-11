@@ -13,14 +13,14 @@
     "prebuild": "npm run docs",
     "check": "jasno check",
     "explain": "jasno explain",
-    "test": "node --conditions=development --import @jasno/core/testing/happy-dom --test --test-isolation=none \"src/**/*.test.ts\"",
+    "test": "jasno test",
     "dev": "jasno dev",
     "build": "jasno build && node --conditions=development --import @jasno/core/testing/happy-dom scripts/prerender.mjs",
     "preview": "jasno preview",
     "e2e": "playwright test"
   },
   "dependencies": {
-    "@jasno/core": "0.5.0"
+    "@jasno/core": "0.6.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
