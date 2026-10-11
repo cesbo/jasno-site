@@ -56,7 +56,7 @@ The full tree and its conventions: https://jasno.dev/docs/tools/project-layout.m
 Each command must exit with 0. A non-zero exit is a failure.
 
 1. `npm run check`: tsc for the app and the tests, and the jasno rules.
-2. `npm test`: component tests with `node:test` and happy-dom.
+2. `npm test`: component tests with `node:test` and happy-dom. `npm test -- src/views/user.test.ts` runs one file.
 3. `npx playwright install` once, then `npm run e2e`: browser tests. Playwright starts `npm run dev` itself.
 4. `npm run build && JASNO_E2E=preview npm run e2e`: the same tests against the production build, served by `npm run preview`.
 

@@ -4,7 +4,7 @@ jasno tests run on `node:test` with happy-dom. There is no jest or vitest. Warni
 
 ## Run the tests
 
-The `npm test` script runs all test files in one process.
+The `npm test` script runs `jasno test`. It runs all test files in one process, with this command:
 
 ```sh
 node --conditions=development \
@@ -19,6 +19,8 @@ Each part has a job:
 - **`--import @jasno/core/testing/happy-dom`** registers the happy-dom globals. It also adds the focus steps of `<dialog>` that happy-dom lacks.
 - **`--test-isolation=none`** keeps all files in one process. It is fast. Module state is shared between files, so jasno resets it after each test.
 - **`"src/**/*.test.ts"`** names the test files.
+
+To run one file, give its path: `npm test -- src/views/user.test.ts`. The [CLI](/docs/tools/cli) page lists the other options.
 
 `tsconfig.test.json` adds the Node types for `*.test.ts` files.
 

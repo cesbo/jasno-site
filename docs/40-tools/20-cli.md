@@ -1,12 +1,13 @@
 # CLI
 
-The `jasno` command has five subcommands: `check`, `dev`, `build`, `preview` and `explain`. Run them through the npm scripts of your project, such as `npm run check`.
+The `jasno` command has six subcommands: `check`, `test`, `dev`, `build`, `preview` and `explain`. Run them through the npm scripts of your project, such as `npm run check`.
 
 All subcommands exit with 0 on success and with 1 on failure. They print one line for each problem, in the form `file:line:col CODE message`. With `--json`, they print one JSON object for each line.
 
 | Script | Command | What it does |
 |---|---|---|
 | `npm run check` | `jasno check` | Type-checks the app and the tests, and runs the jasno rules |
+| `npm test` | `jasno test` | Runs the component tests |
 | `npm run dev` | `jasno dev` | Starts the development server |
 | `npm run build` | `jasno build` | Builds the app for production into `dist/` |
 | `npm run preview` | `jasno preview` | Serves `dist/` as a static host does |
@@ -21,6 +22,19 @@ Warnings do not fail the command. Use `--strict` to make warnings fail too. They
 ```sh
 npm run check -- --strict
 ```
+
+## test
+
+`jasno test` runs the component tests with `node:test` and happy-dom. It runs all files that match `src/**/*.test.ts`, in one process. The [testing](/docs/api/testing) page explains the setup.
+
+To run some files only, give their paths. To select tests by name, give a Node test flag. Write the value of a flag after `=`. A word that does not start with `-` is a file name.
+
+```sh
+npm test -- src/views/user.test.ts
+npm test -- --test-name-pattern=save
+```
+
+`jasno test` gives all its arguments to `node --test` unchanged. Node prints the results, so `--json` does not apply.
 
 ## dev
 
